@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Movie Studio</string>
+    <string name="movie_detail">MovieDetail</string>
+
+    <string name="base_url_for_downloading_movie_poster">http://image.tmdb.org/t/p/</string>
+    <string name="movie_poster_size">w185</string>
+    <string name="backDrop_poster_size">w342</string>
+
+    <string name="Sort_by_popular_movie">Popular Movies</string>
+    <string name="Sort_by_top_rated_movie">Top Rated Movies</string>
+    <string name="Sort_by">Sort By</string>
+    <string name="no_internet_message">No internet Connectivity. Please check your network settings </string>
+    <string name="error_message">Failed to connect, Please try after sometime</string>
+    <string name="no_Reviews">No Reviews</string>
+    <string name="no_Trailers">No Trailers</string>
+    <string name="no_fav">No Movie Added to Favourites.</string>
+    <string name = "default_text">Please select a movie to show details</string>
+
+    <!--Strings for TABs on the main Activity-->
+    <string name="popular">POPULAR</string>
+    <string name="top_rated">TOP RATED</string>
+    <string name ="favourites">FAVOURITE</string>
+
+    <string name="content_authority">com.example.manvi.movieappstage1</string>
+
+    <string name="mark_as_favourite">Mark the movie in your favourites</string>
+
+    <string name="action_share">Share</string>
+    <string name="review">Reviews</string>
+    <string name="trailer">Trailers</string>
+    <string name="overview">Overview</string>
+    <string name="movie_image">Image of Movie</string>
+
+    <string name="app_bar_height">wrap_content</string>
+    <string name="Add_fav">Added to Favourites</string>
+    <string name="delete_movie">Removed from Favourites</string>
+    <string name="no_internet">No Internet Connection</string>
+    <string name="dismiss">Dismiss</string>
+
+</resources>
