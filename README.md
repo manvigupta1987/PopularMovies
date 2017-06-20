@@ -9,32 +9,25 @@ App uses The Movie Database API. You have to enter your API key in order to run 
 MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 
-<br />
+<br /><br />
 **Main Screen**<br />
 ![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/MainScreen.png)
-
-
-<br />
+<br /><br />
 **Favourite Movie**<br />
 ![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/FavouriteMovieTab.png)
-
-
-
-<br />
+<br /><br />
 **Detail Screen**<br />
 ![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/DetailScreen.png)
-
-
-
-<br />
+<br /><br />
 **Detail Screen With Trailer and review**<br />
 ![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/DetailMovieWithScrolling.png)
-
-
-
-<br />
+<br /><br />
 **Screen playing trailer on you tube**<br />
 ![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/YouTubeTrailer.png)
+
+
+
+
 
 
 
