@@ -11,32 +11,30 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 <br /><br />
 **Main Screen**<br />
-![alt tag](https://github.com/manvigupta1987/AndroidProjects/blob/master/MovieAppStage2/ScreenShots/MainScreen.png)
+![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/MainScreen.png)
 
 
 <br /><br />
 **Favourite Movie**<br />
-![alt tag](https://github.com/manvigupta1987/AndroidProjects/blob/master/MovieAppStage2/ScreenShots/FavouriteMovieTab.png)
+![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/FavouriteMovieTab.png)
 
 
 
 <br /><br />
 **Detail Screen**<br />
-![alt tag](https://github.com/manvigupta1987/AndroidProjects/blob/master/MovieAppStage2/ScreenShots/DetailScreen.png)
+![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/DetailScreen.png)
 
 
 
 <br /><br />
 **Detail Screen With Trailer and review**<br />
-![alt tag](https://github.com/manvigupta1987/AndroidProjects/blob/master/MovieAppStage2/ScreenShots/DetailMovieWithScrolling.png)
+![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/DetailMovieWithScrolling.png)
 
 
 
 <br /><br />
 **Screen playing trailer on you tube**<br />
-![alt tag](https://github.com/manvigupta1987/AndroidProjects/blob/master/MovieAppStage2/ScreenShots/YouTubeTrailer.png)
-
-
+![alt tag](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/YouTubeTrailer.png)
 
 
 
