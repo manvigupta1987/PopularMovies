@@ -236,6 +236,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         showTrailerDataView();
     }
 
+
      /*
         this function will setup the recycler view with vertical linear layout for Reviews.
      */

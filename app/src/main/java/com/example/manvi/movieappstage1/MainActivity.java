@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity{
             mTwoPane = false;
         }
 
+
         TabLayoutAdapter adapter = new TabLayoutAdapter(getSupportFragmentManager(), isTablet());
 
 
