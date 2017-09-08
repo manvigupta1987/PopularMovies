@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.manvi.movieappstage1.Model.MovieData;
 import com.example.manvi.movieappstage1.R;
@@ -56,6 +57,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void onBindViewHolder(MovieAdapterViewHolder holder, final int position)
     {
         if(mDatasetList!=null) {
+            holder.mTVTitle.setText(mDatasetList.get(position).getTitle());
+            holder.mTVRating.setText(String.valueOf(mDatasetList.get(position).getVoteAvgCount()));
             String poster = mDatasetList.get(position).getPoster_path(mContext);
             if (poster != null) {
                 //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
@@ -76,9 +79,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public void setDatasetList(ArrayList<MovieData> dataList){
-        if(mDatasetList!=null) {
-            mDatasetList.clear();
-        }
         mDatasetList = dataList;
         if(mDatasetList!=null){
             notifyDataSetChanged();
@@ -92,6 +92,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         @BindView(R.id.movie_image) ImageView mMovieImage;
+        @BindView(R.id.tv_rating)
+        TextView mTVRating;
+        @BindView(R.id.tv_title)
+        TextView mTVTitle;
         //@BindView(R.id.vote_average) TextView mVoteAverage;
 
         public MovieAdapterViewHolder(View itemView) {

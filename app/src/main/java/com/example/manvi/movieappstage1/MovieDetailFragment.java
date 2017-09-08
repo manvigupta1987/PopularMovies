@@ -83,8 +83,8 @@ public class MovieDetailFragment extends Fragment implements
     @BindDrawable(R.drawable.backdrop_loading_placeholder)
     Drawable loading_backdrop;
 
-    @BindView(R.id.movie_genre)
-    TextView mMovieGenre;
+//    @BindView(R.id.movie_genre)
+//    TextView mMovieGenre;
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbar;
 
     @BindView(R.id.trailerRecyclerView)

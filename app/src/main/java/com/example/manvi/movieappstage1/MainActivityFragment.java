@@ -168,11 +168,6 @@ public class MainActivityFragment extends Fragment implements MovieAdapter.ListI
 
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if ((mDatasetList!=null && mDatasetList.isEmpty())
@@ -222,7 +217,6 @@ public class MainActivityFragment extends Fragment implements MovieAdapter.ListI
                 mDatasetList.add(movieData);
             }
             mMovieAdapter.notifyDataSetChanged();
-            //mMovieAdapter.setDatasetList(movieDataList);
             showJsonDataView();
             }
         }

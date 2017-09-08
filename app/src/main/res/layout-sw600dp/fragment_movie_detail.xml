@@ -114,11 +114,11 @@
                                 android:text="Language:"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Genre:"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                            <!--<TextView-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:text="Genre:"-->
+                                <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium" />-->
                         </LinearLayout>
 
                         <LinearLayout
@@ -155,12 +155,12 @@
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 tools:text="TextView" />
 
-                            <TextView
-                                android:id="@+id/movie_genre"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                                tools:text="TextView" />
+                            <!--<TextView-->
+                                <!--android:id="@+id/movie_genre"-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+                                <!--tools:text="TextView" />-->
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
