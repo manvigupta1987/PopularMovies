@@ -57,7 +57,7 @@ import com.example.manvi.movieappstage1.Model.MovieData;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class MovieDetailFragment extends Fragment implements
         FloatingActionButton.OnCheckedChangeListener, FetchTrailerReviewFromNetwork.PostAsyncListener,
         TrailerAdapter.ListItemClickListener{
 
@@ -85,7 +85,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @BindView(R.id.movie_genre)
     TextView mMovieGenre;
-    //@BindView(R.id.favourite_fab) FloatingActionButton mFloatingButton;
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbar;
 
     @BindView(R.id.trailerRecyclerView)
@@ -115,17 +114,18 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     private String shareYouTubeUrlLink; //Stores first link of trailer which will be used while sending the share intent
 
     private Context mContext;
+    private MovieData mMovie;
 
-    private String[] projection = {MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_BACKDROP,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_TITLE,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_RELEASE_DATE,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_VOTE_COUNT,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_VOTE_AVG,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_LANG,
-            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_MOVIE_ID,
-            " group_concat(" + MovieContract.GenreList.TABLE_NAME + "."
-                    + MovieContract.GenreList.COLUMN_GENRE_NAME + ", ', ' ) as name"};
+//    private String[] projection = {MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_BACKDROP,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_POSTER_PATH,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_TITLE,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_RELEASE_DATE,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_VOTE_COUNT,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_VOTE_AVG,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_LANG,
+//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_MOVIE_ID,
+//            " group_concat(" + MovieContract.GenreList.TABLE_NAME + "."
+//                    + MovieContract.GenreList.COLUMN_GENRE_NAME + ", ', ' ) as name"};
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -140,10 +140,15 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        Bundle args = this.getArguments();
+        Bundle args = getArguments();
         if(args!=null) {
             if (args.containsKey(ConstantsUtils.TABLET_MODE)) {
                 mTablet = args.getBoolean(ConstantsUtils.TABLET_MODE);
+            }
+            if(args.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
+                mMovie = args.getParcelable(ConstantsUtils.MOVIE_DETAIL);
+                mUri =   MovieContract.FavoriteMovieEntry.buildMovieDataUriWithMovieID(mMovie.getMovieID());
+                Log.d(TAG, "Received movie from getArguments() :  " + mMovie.toString());
             }
         }
         return rootView;
@@ -177,13 +182,12 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         mFloatingButton = (FloatingActionButton)getActivity().findViewById(R.id.favourite_fab);
         mFloatingButton.setOnCheckedChangeListener(this);
 
-        Bundle args = this.getArguments();
-        if(args!=null) {
-            if (args.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
-                mUri = args.getParcelable(ConstantsUtils.MOVIE_DETAIL);
-                if (mUri == null) {
-                    throw new NullPointerException("URI for DetailActivity cannot be null");
-                }
+        Bundle args = getArguments();
+        if (args!=null && args.containsKey(ConstantsUtils.DEFAULT_TEXT)) {
+            if (mTablet) {
+                showDefaultTextView();
+            }
+        }
                 //In case of tablet, dont show back button on the action bar for the detail activity.
                 if (!mTablet) {
                     setupActionBar();
@@ -200,15 +204,10 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 //else unselected.
                 checkForFavouriteStatus();
                 //start the loader for fetching the movie details from the data base.
-                getLoaderManager().initLoader(ConstantsUtils.MOVIE_DETAIL_LOADER_ID, null, this);
-            }
-            else if (args.containsKey(ConstantsUtils.DEFAULT_TEXT)) {
-                if(mTablet) {
-                    showDefaultTextView();
-                }
-            }
+                //getLoaderManager().initLoader(ConstantsUtils.MOVIE_DETAIL_LOADER_ID, null, this);
+                setupMovieDetails();
+
         }
-    }
 
     /* Setup the detail activity action Bar in case of phone layout */
     private void setupActionBar()
@@ -296,7 +295,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         new AsyncTask<Void, Void, Cursor>() {
             @Override
             protected Cursor doInBackground(Void... voids) {
-                String[] projection = {MovieContract.FavoriteMovieEntry.COLUMN_FAV_MOVIE_ID};
+                String[] projection = {MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID};
                 String movieid = mUri.getLastPathSegment();
                 Uri uri = ContentUris.withAppendedId(MovieContract.FavoriteMovieEntry.CONTENT_URI, Long.parseLong(movieid));
 
@@ -339,40 +338,17 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         mNoTrailerTextView.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        switch (loaderId) {
-            case ConstantsUtils.MOVIE_DETAIL_LOADER_ID:
-                return new CursorLoader(getActivity(), mUri, projection, null, null, null);
-            default:
-                throw new RuntimeException("Loader Not Implemented: " + loaderId);
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        boolean hasVaildData = false;
-
+    public void setupMovieDetails() {
         if(mTablet) {
             showDetailView();
         }
-
-        if (data != null && data.moveToFirst()) {
-            hasVaildData = true;
-        } else {
-            Log.e(TAG, "No Valid Cursor");
-        }
-
-        if (hasVaildData) {
-
-            mOverview.setText(data.getString(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_OVERVIEW)));
-            String title = data.getString(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_TITLE));
+            mOverview.setText(mMovie.getOverview());
+            String title = mMovie.getTitle();
             mCollapsingToolbar.setTitle(title);
             mCollapsingToolbar.setContentDescription(title);
 
             shareMovieTitle = title;
-            String releaseDate = data.getString(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_RELEASE_DATE));
-
+            String releaseDate = mMovie.getReleaseDate();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 Date date = simpleDateFormat.parse(releaseDate);
@@ -385,73 +361,59 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 e.printStackTrace();
             }
 
-            Double rating = data.getDouble(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_VOTE_AVG));
+            Double rating = mMovie.getVoteAvgCount();
             String rating_text = rating.toString() + "/10";
             mRating.setText(rating_text);
             mRating.setContentDescription(rating_text);
 
-            Integer votes = data.getInt(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_VOTE_COUNT));
+            Integer votes = mMovie.getVoteCount();
             String votes_text = votes.toString();
             mMovieVotes.setText(votes_text);
             mMovieVotes.setContentDescription(votes_text);
 
 
-            String lang = data.getString(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_LANG));
+            String lang = mMovie.getOriginalLang();
             mMovieLanguage.setText(lang);
             mMovieLanguage.setContentDescription(lang);
 
-            String posterPath = data.getString(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_POSTER_PATH));
+            String posterPath = mMovie.getPoster_path(mContext);
             Picasso.with(getActivity()).load(posterPath).placeholder(R.drawable.backdrop_loading_placeholder)
                     .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(mImageView);
 
-            String backDropImagePath = data.getString(data.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_BACKDROP));
+            String backDropImagePath = mMovie.getBackDropPath(mContext);
             Picasso.with(getActivity()).load(backDropImagePath).placeholder(loading_backdrop)
                     .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage);
 
 
-            String genreIds = data.getString(9);
-            mMovieGenre.setText(genreIds);
-            mMovieLanguage.setContentDescription(genreIds);
+//            String genreIds = mMovie
+//            mMovieGenre.setText(genreIds);
+//            mMovieLanguage.setContentDescription(genreIds);
 
         }
-    }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 
     /*
         This function adds the movies into the favourite list.
      */
-    private void addToFavouritesClickListener(Long movieId) {
-        ContentValues values = new ContentValues();
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_FAV_MOVIE_ID, movieId);
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_CREATION_TIME, System.currentTimeMillis());
 
-        getContext().getContentResolver().insert(MovieContract.FavoriteMovieEntry.CONTENT_URI, values);
-    }
 
-    //This function deletes the movie from the favourite list
-    public int deleteFromFavouritesClickListener(Long movieId) {
-        Uri uri = ContentUris.withAppendedId(MovieContract.FavoriteMovieEntry.CONTENT_URI, movieId);
-        return (getContext().getContentResolver().delete(uri, null, null));
-    }
+//    //This function deletes the movie from the favourite list
+//    public int deleteFromFavouritesClickListener(int movieId) {
+//        Uri uri = ContentUris.withAppendedId(MovieContract.FavoriteMovieEntry.CONTENT_URI, movieId);
+//        return (getContext().getContentResolver().delete(uri, null, null));
+//    }
 
     @Override
     public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
-        String movieId = mUri.getLastPathSegment();
-        Long selMovieId = Long.parseLong(movieId);
+
+        UpdateFavouriteMovieDBTask favouriteMovieDBTask = new UpdateFavouriteMovieDBTask(getActivity(), mMovie);
+        favouriteMovieDBTask.execute();
         if (isChecked) {
-            addToFavouritesClickListener(selMovieId);
             Snackbar.make(fabView, getString(R.string.Add_fav), Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            int rowDeleted = deleteFromFavouritesClickListener(selMovieId);
-            if (rowDeleted > 0) {
                 Snackbar.make(fabView, getString(R.string.delete_movie), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-            }
         }
     }
 

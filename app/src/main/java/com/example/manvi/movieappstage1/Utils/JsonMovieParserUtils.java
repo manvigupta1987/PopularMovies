@@ -32,6 +32,9 @@ public class JsonMovieParserUtils {
         }
                 /* Movie information. Each Movie's info is an element of the "result" array */
         final String MD_RESULTS = "results";
+        final String MD_TOTAL_RESULTS = "total_results";
+        final String MD_TOTAL_PAGES = "total_pages";
+
 
         /* poster path is children of the "poster_path" object */
         final String MD_POSTER_PATH = "poster_path";
@@ -64,7 +67,7 @@ public class JsonMovieParserUtils {
             String overview = movieItem.getString(MD_OVERVIEW);
             String title = movieItem.getString(MD_TITLE);
             Double vote = Double.parseDouble(movieItem.getString(MD_VOTE));
-            long movieId = Long.parseLong(movieItem.getString(MD_MovieID));
+            int movieId = Integer.parseInt(movieItem.getString(MD_MovieID));
             String backDrop = movieItem.getString(MD_BACKDROP);
             String lang = movieItem.getString(MD_LANG);
             Double popularity = Double.parseDouble(movieItem.getString(MD_Popularity));

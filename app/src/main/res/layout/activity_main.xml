@@ -42,5 +42,4 @@ onSaveInstance will be called twice. So, make the fragment dynamically.-->
         android:layout_height="0px"
         android:layout_weight="1"
         android:background="@android:color/white" />
-
 </LinearLayout>

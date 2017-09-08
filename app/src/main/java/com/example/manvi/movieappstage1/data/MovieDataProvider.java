@@ -18,24 +18,8 @@ import android.util.Log;
 
 public class MovieDataProvider extends ContentProvider {
 
-    private static final int CODE_MOVIE_DIR = 100;
-    private static final int CODE_MOVIE_ID = 101;
-    private static final int CODE_MOVIE_STRING = 102;
-
     private static final int CODE_FAVOURITE_MOVIE_DIR = 200;
     private static final int CODE_FAVOURITE_MOVIE = 201;
-
-    private static final int CODE_GENRE_DIR = 300;
-    private static final int CODE_GENRE_ID = 301;
-
-    private static final int CODE_MOVIE_GENRE_DIR = 400;
-    private static final int CODE_MOVIE_GENRE_ID = 401;
-
-    private static final int CODE_REVIEW_DIR = 500;
-    private static final int CODE_REVIEW_MOVIE = 501;
-
-    private static final int CODE_TRAILER_DIR = 600;
-    private static final int CODE_TRAILER_MOVIE = 601;
 
     private static final String TAG = MovieDataProvider.class.getSimpleName();
 
@@ -45,24 +29,8 @@ public class MovieDataProvider extends ContentProvider {
 
     private static UriMatcher buildUriMatcher(){
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_MOVIES,CODE_MOVIE_DIR);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_MOVIES + "/#",CODE_MOVIE_ID);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_MOVIES + "/*",CODE_MOVIE_STRING);
-
         uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_FAVOURITE_MOVIE,CODE_FAVOURITE_MOVIE_DIR);
         uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_FAVOURITE_MOVIE + "/#",CODE_FAVOURITE_MOVIE);
-
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_GENRE,CODE_GENRE_DIR);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_GENRE + "/#",CODE_GENRE_ID);
-
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_GENRE_MOVIE,CODE_MOVIE_GENRE_DIR);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_GENRE_MOVIE + "/#",CODE_MOVIE_GENRE_ID);
-
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_TRAILER,CODE_TRAILER_DIR);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_TRAILER + "/#",CODE_TRAILER_MOVIE);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_REVIEWS,CODE_REVIEW_DIR);
-        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY,MovieContract.PATH_REVIEWS+"/#", CODE_REVIEW_MOVIE);
-
         return uriMatcher;
     }
 
@@ -79,219 +47,78 @@ public class MovieDataProvider extends ContentProvider {
         SQLiteDatabase sqLiteDatabase = mMovieDbHelper.getReadableDatabase();
         Cursor cursor;
         switch (matchId){
-            case CODE_MOVIE_DIR:
-                cursor = sqLiteDatabase.query(MovieContract.MovieDataEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,orderBy);
-                break;
-            case CODE_MOVIE_ID:
-                String id = uri.getLastPathSegment();
-                Log.e(TAG,"Movie ID = "+ id);
-                selection = MovieContract.MovieDataEntry.COLUMN_MOVIE_ID + " = ? ";
-                selectionArgs = new String[]{id};
-
-                String movieIdQuery = "SELECT " + MovieContract.MovieDataEntry.COLUMN_BACKDROP + " , " + MovieContract.MovieDataEntry.COLUMN_LANG + " , "+
-                        MovieContract.MovieDataEntry.COLUMN_RELEASE_DATE + " , " + MovieContract.MovieDataEntry.COLUMN_POSTER_PATH + " , " +
-                        MovieContract.MovieDataEntry.COLUMN_VOTE_AVG + " , " + MovieContract.MovieDataEntry.COLUMN_VOTE_COUNT + " , " +
-                        MovieContract.MovieDataEntry.COLUMN_MOVIE_ID + " , "+ MovieContract.MovieDataEntry.COLUMN_TITLE + " , " + MovieContract.MovieDataEntry.COLUMN_OVERVIEW +
-                        " , group_concat(" + MovieContract.GenreList.TABLE_NAME + "."
-                        + MovieContract.GenreList.COLUMN_GENRE_NAME + ", ', ' ) as name" +
-                        " FROM " + MovieContract.MovieDataEntry.TABLE_NAME + " INNER JOIN " + MovieContract.movieGenreList.TABLE_NAME
-                        + " ON " + MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_MOVIE_ID+
-                        " = " + MovieContract.movieGenreList.TABLE_NAME + "." +MovieContract.movieGenreList.COLUMN_MOVIE_DB_ID +
-                        " INNER JOIN " + MovieContract.GenreList.TABLE_NAME + " ON " + MovieContract.movieGenreList.TABLE_NAME + "."
-                        +MovieContract.movieGenreList.COLUMN_GENRE_ID  + " = " + MovieContract.GenreList.TABLE_NAME + "." + MovieContract.GenreList.COLUMN_GENRE_ID +
-                        " WHERE " + MovieContract.MovieDataEntry.COLUMN_MOVIE_ID + " =?" +
-                        " GROUP BY " + MovieContract.movieGenreList.COLUMN_MOVIE_DB_ID ;
-
-                cursor = sqLiteDatabase.rawQuery(movieIdQuery,selectionArgs);
-                break;
-
             case CODE_FAVOURITE_MOVIE_DIR:
-                Log.e(TAG,"Movie Data Query");
-                String rawQuery = "SELECT * FROM " + MovieContract.FavoriteMovieEntry.TABLE_NAME + " INNER JOIN " + MovieContract.MovieDataEntry.TABLE_NAME
-                        + " ON " + MovieContract.FavoriteMovieEntry.TABLE_NAME + "." + MovieContract.FavoriteMovieEntry.COLUMN_FAV_MOVIE_ID+
-                        " = " + MovieContract.MovieDataEntry.TABLE_NAME + "." +MovieContract.MovieDataEntry.COLUMN_MOVIE_ID +
-                        " ORDER BY " + MovieContract.FavoriteMovieEntry.COLUMN_CREATION_TIME;
-
-                cursor = sqLiteDatabase.rawQuery(rawQuery,null);
+                cursor = sqLiteDatabase.query(
+                    MovieContract.FavoriteMovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        orderBy);
                 break;
 
             case CODE_FAVOURITE_MOVIE:
-                String Query = "SELECT * FROM " + MovieContract.FavoriteMovieEntry.TABLE_NAME + " INNER JOIN " + MovieContract.MovieDataEntry.TABLE_NAME
-                        + " ON " + MovieContract.FavoriteMovieEntry.TABLE_NAME + "." + MovieContract.FavoriteMovieEntry.COLUMN_FAV_MOVIE_ID+
-                        " = " + MovieContract.MovieDataEntry.TABLE_NAME + "." +MovieContract.MovieDataEntry.COLUMN_MOVIE_ID +
-                        " WHERE " + MovieContract.FavoriteMovieEntry.COLUMN_FAV_MOVIE_ID + " =? ";
-
-                String movieId =  uri.getLastPathSegment();
+                String movieId = uri.getLastPathSegment();
+                selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
                 selectionArgs = new String[]{movieId};
-                cursor = sqLiteDatabase.rawQuery(Query,selectionArgs);
-                break;
-            case CODE_GENRE_DIR:
-                cursor = sqLiteDatabase.query(MovieContract.GenreList.TABLE_NAME,projection,selection,selectionArgs,null,null,orderBy);
-                break;
-            case CODE_GENRE_ID:
-                String genre_id = uri.getLastPathSegment();
-                selection = MovieContract.GenreList.COLUMN_GENRE_ID + " =? ";
-                selectionArgs = new String[]{genre_id};
-                cursor = sqLiteDatabase.query(MovieContract.GenreList.TABLE_NAME,projection,selection,selectionArgs,null,null,orderBy);
-                break;
-            case CODE_TRAILER_MOVIE:
-                String trailerMovieId = uri.getLastPathSegment();
-                selection = MovieContract.trailerList.COLUMN_TRAILER_MOVIE_ID + " =? ";
-                selectionArgs = new String[]{trailerMovieId};
-
-                cursor = sqLiteDatabase.query(MovieContract.trailerList.TABLE_NAME, projection, selection, selectionArgs, null, null,null);
-                break;
-
-            case CODE_REVIEW_MOVIE:
-                String reviewMovieId = uri.getLastPathSegment();
-                selection = MovieContract.reviewList.COLUMN_REVIEW_MOVIE_ID + " =? ";
-                selectionArgs = new String[]{reviewMovieId};
-
-                cursor = sqLiteDatabase.query(MovieContract.reviewList.TABLE_NAME, projection, selection, selectionArgs, null, null,null);
+                cursor = sqLiteDatabase.query(MovieContract.FavoriteMovieEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,orderBy);
                 break;
             default:
                 throw new IllegalArgumentException("Invaild URI exception");
         }
-
         cursor.setNotificationUri(getContext().getContentResolver(),uri);
         return cursor;
     }
 
-    @Override
-    public int bulkInsert(Uri uri, ContentValues[] values) {
-        int matchId = sUriMatcher.match(uri);
-        SQLiteDatabase sqLiteDatabase = mMovieDbHelper.getWritableDatabase();
-        switch (matchId){
-            case CODE_MOVIE_DIR: {
-                sqLiteDatabase.beginTransaction();
-                int rowInserted = 0;
-                try {
-                    for (ContentValues value : values) {
-                        long _id = sqLiteDatabase.insert(MovieContract.MovieDataEntry.TABLE_NAME, null, value);
-                        if (_id > 0) {
-                            rowInserted++;
-                        }
-                    }
-                    sqLiteDatabase.setTransactionSuccessful();
-                } finally {
-                    sqLiteDatabase.endTransaction();
-                }
-                if (rowInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowInserted;
-            }
-            case CODE_GENRE_DIR:
-            {
-                sqLiteDatabase.beginTransaction();
-                int rowInserted = 0;
-                try {
-                    for (ContentValues value : values) {
-                        long _id = sqLiteDatabase.insert(MovieContract.GenreList.TABLE_NAME, null, value);
-                        if (_id > 0) {
-                            rowInserted++;
-                        }
-                    }
-                    sqLiteDatabase.setTransactionSuccessful();
-                } finally {
-                    sqLiteDatabase.endTransaction();
-                }
-                if (rowInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowInserted;
-            }
-            case CODE_MOVIE_GENRE_DIR:
-            {
-                sqLiteDatabase.beginTransaction();
-                int rowInserted = 0;
-                try {
-                    for (ContentValues value : values) {
-                        long _id = sqLiteDatabase.insert(MovieContract.movieGenreList.TABLE_NAME, null, value);
-                        if (_id > 0) {
-                            rowInserted++;
-                        }
-                    }
-                    sqLiteDatabase.setTransactionSuccessful();
-                } finally {
-                    sqLiteDatabase.endTransaction();
-                }
-                if (rowInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowInserted;
-            }
-            case CODE_REVIEW_DIR:
-            {
-                sqLiteDatabase.beginTransaction();
-                int rowInserted = 0;
-                try {
-                    for (ContentValues value : values) {
-                        long _id = sqLiteDatabase.insert(MovieContract.reviewList.TABLE_NAME, null, value);
-                        if (_id > 0) {
-                            rowInserted++;
-                        }
-                    }
-                    sqLiteDatabase.setTransactionSuccessful();
-                } finally {
-                    sqLiteDatabase.endTransaction();
-                }
-                if (rowInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowInserted;
-            }
-            case CODE_TRAILER_DIR:
-            {
-                sqLiteDatabase.beginTransaction();
-                int rowInserted = 0;
-                try {
-                    for (ContentValues value : values) {
-                        long _id = sqLiteDatabase.insert(MovieContract.trailerList.TABLE_NAME, null, value);
-                        if (_id > 0) {
-                            rowInserted++;
-                        }
-                    }
-                    sqLiteDatabase.setTransactionSuccessful();
-                } finally {
-                    sqLiteDatabase.endTransaction();
-                }
-                if (rowInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowInserted;
-            }
-            default:
-                return super.bulkInsert(uri, values);
-        }
-    }
 
-    @Nullable
     @Override
     public String getType(Uri uri) {
-        return null;
-    }
+        final int match = sUriMatcher.match(uri);
 
-    @Nullable
-    @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
-        int matchId = sUriMatcher.match(uri);
-        SQLiteDatabase sqLiteDatabase = mMovieDbHelper.getWritableDatabase();
-        long rowInserted;
-        switch (matchId) {
+        switch (match) {
+            /**
+             * Get all favourite movie records
+             */
             case CODE_FAVOURITE_MOVIE_DIR:
-                rowInserted = sqLiteDatabase.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, null, contentValues);
-                break;
+                return MovieContract.FavoriteMovieEntry.CONTENT_TYPE;
+            /**
+             * Get a movie record
+             */
+            case CODE_FAVOURITE_MOVIE:
+                return MovieContract.FavoriteMovieEntry.CONTENT_ITEM_TYPE;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        if(rowInserted >0)
-        {
-            getContext().getContentResolver().notifyChange(uri,null);
-            return ContentUris.withAppendedId(uri,rowInserted);
-        }
-        return null;
     }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        final SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        Uri returnUri;
+
+        switch (match) {
+            case CODE_FAVOURITE_MOVIE_DIR: {
+                long _id = db.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = MovieContract.FavoriteMovieEntry.buildMovieDataUriWithMovieID(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        //calling notifyChange on the Content Resolver
+        //to notify all of the registered observers.
+        //Note : We must use the passed in uri & not the returnUri,
+        //as that will not correctly notify our cursors of the same.
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
+    }
+
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs)
@@ -304,7 +131,7 @@ public class MovieDataProvider extends ContentProvider {
             case CODE_FAVOURITE_MOVIE:
             {
                 String id = uri.getLastPathSegment();
-                selection = MovieContract.FavoriteMovieEntry.COLUMN_FAV_MOVIE_ID + " =? ";
+                selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
                 selectionArgs = new String[]{id};
                 rowDeleted = sqLiteDatabase.delete(MovieContract.FavoriteMovieEntry.TABLE_NAME,selection,selectionArgs);
                 break;
@@ -313,11 +140,10 @@ public class MovieDataProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        if(rowDeleted > 0)
+        if(rowDeleted != 0)
         {
             getContext().getContentResolver().notifyChange(uri,null);
         }
-
         return rowDeleted;
     }
 
@@ -327,11 +153,8 @@ public class MovieDataProvider extends ContentProvider {
         SQLiteDatabase sqLiteDatabase = mMovieDbHelper.getWritableDatabase();
         int rowUpdated;
         switch (matchId) {
-            case CODE_MOVIE_ID: {
-                String id = uri.getLastPathSegment();
-                selection = MovieContract.MovieDataEntry.COLUMN_MOVIE_ID + " =? ";
-                selectionArgs = new String[]{id};
-                rowUpdated = sqLiteDatabase.update(MovieContract.MovieDataEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+            case CODE_FAVOURITE_MOVIE_DIR: {
+                rowUpdated = sqLiteDatabase.update(MovieContract.FavoriteMovieEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             }
             default:

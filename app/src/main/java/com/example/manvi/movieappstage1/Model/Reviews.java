@@ -9,7 +9,6 @@ public class Reviews {
     private String mAuthor;
     private String mContent;
 
-
     public Reviews(String id, String Author, String Content )
     {
         this.mId = id;

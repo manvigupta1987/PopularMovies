@@ -10,10 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.manvi.movieappstage1.Model.MovieData;
 import com.example.manvi.movieappstage1.R;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.example.manvi.movieappstage1.data.MovieContract;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,21 +28,20 @@ import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-
-
     private final String TAG = MovieAdapter.class.getSimpleName();
-    private Cursor mCursor;
+    private ArrayList<MovieData> mDatasetList;
 
     private Context mContext;
     private ListItemClickListener mlistItemClickListener;
 
-    public MovieAdapter(Context context, ListItemClickListener listItemClickListener){
+    public MovieAdapter(Context context, ListItemClickListener listItemClickListener, ArrayList<MovieData> dataList){
         mContext = context;
         mlistItemClickListener = listItemClickListener;
+        mDatasetList = dataList;
     }
 
     public interface ListItemClickListener{
-        public void onItemClicked(long movieId);
+        public void onItemClicked(MovieData movie);
     }
 
 
@@ -52,30 +55,38 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, final int position)
     {
-        if(!(mCursor.moveToPosition(position)))
-        {
-            return;
-        }
-
-        String poster = mCursor.getString(mCursor.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_POSTER_PATH));
-        if(poster!=null) {
-            //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
-            Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)
-                    .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(holder.mMovieImage);
+        if(mDatasetList!=null) {
+            String poster = mDatasetList.get(position).getPoster_path(mContext);
+            if (poster != null) {
+                //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
+                Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)
+                        .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(holder.mMovieImage);
+            }
         }
     }
 
 
     @Override
     public int getItemCount() {
-        if(mCursor == null)
-        {
+        if(mDatasetList!=null) {
+            return mDatasetList.size();
+        }else {
             return 0;
         }
-        else
-        {
-            return mCursor.getCount();
+    }
+
+    public void setDatasetList(ArrayList<MovieData> dataList){
+        if(mDatasetList!=null) {
+            mDatasetList.clear();
         }
+        mDatasetList = dataList;
+        if(mDatasetList!=null){
+            notifyDataSetChanged();
+        }
+    }
+
+    public ArrayList<MovieData> getDataSetList(){
+        return mDatasetList;
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -91,15 +102,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         @Override
         public void onClick(View view) {
-            mCursor.moveToPosition(getAdapterPosition());
-            long movieId = mCursor.getLong(mCursor.getColumnIndex(MovieContract.MovieDataEntry.COLUMN_MOVIE_ID));
-            mlistItemClickListener.onItemClicked(movieId);
+            int itemPosition = getAdapterPosition();
+            if (itemPosition != RecyclerView.NO_POSITION) {
+                MovieData movie = mDatasetList.get(itemPosition);
+                mlistItemClickListener.onItemClicked(movie);
+            }
         }
-    }
-
-    public void swapCursor(Cursor cursor)
-    {
-        mCursor = cursor;
-        notifyDataSetChanged();
     }
 }

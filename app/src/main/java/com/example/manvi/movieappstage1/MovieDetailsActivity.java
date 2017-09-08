@@ -22,15 +22,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent!=null)
         {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, intent.getData());
-            if(intent.hasExtra(ConstantsUtils.TABLET_MODE))
-            {
-                bundle.putBoolean(ConstantsUtils.TABLET_MODE, intent.getBooleanExtra(ConstantsUtils.TABLET_MODE,false));
-            }
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, intent.getExtras());
+//            if(intent.hasExtra(ConstantsUtils.TABLET_MODE))
+//            {
+//                bundle.putBoolean(ConstantsUtils.TABLET_MODE, intent.getBooleanExtra(ConstantsUtils.TABLET_MODE,false));
+//            }
 
             MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-            movieDetailFragment.setArguments(bundle);
+            movieDetailFragment.setArguments(intent.getExtras());
 
             getSupportFragmentManager().beginTransaction().replace(R.id.container ,movieDetailFragment)
                     .commit();

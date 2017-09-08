@@ -6,7 +6,8 @@
     <android.support.v7.widget.RecyclerView
        style="@style/matchParent"
         android:id="@+id/recycler_view"
-        android:clickable="true">
+        android:clickable="true"
+        android:scrollbars="vertical">
     </android.support.v7.widget.RecyclerView>
 
     <ProgressBar

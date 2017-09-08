@@ -9,8 +9,10 @@ import com.example.manvi.movieappstage1.Model.GenreData;
 import com.example.manvi.movieappstage1.Model.MovieData;
 import com.example.manvi.movieappstage1.Model.MovieGenre;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,10 +46,11 @@ public final class NetworkUtils {
      *
      * @return The URL to use to query the weather server.
      */
-    public static URL buildURL(String sortBy)
+    public static URL buildURL(String sortBy, int page)
     {
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                           .appendPath(sortBy)
+                          .appendQueryParameter("page",String.valueOf(page))
                           .appendQueryParameter(API_KEY_PARAM,BuildConfig.API_KEY)
                           .build();
         URL url = null;
@@ -150,43 +153,97 @@ public final class NetworkUtils {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
+
+
     public static String getResponseFromHttpUrl(URL url) throws IOException
     {
         HttpURLConnection httpURLConnection = null;
-        InputStream inputStream = null;
+        BufferedReader br = null;
+
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             // Timeout for connection.connect() arbitrarily set to 3000ms.
             httpURLConnection.setConnectTimeout(3000);
+            httpURLConnection.setReadTimeout(3000);
             // For this use case, set HTTP method to GET.
             httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setAllowUserInteraction(false);
+            httpURLConnection.setUseCaches(false);
+            InputStream error = httpURLConnection.getErrorStream();
+                    httpURLConnection.connect();
 
-            inputStream = httpURLConnection.getInputStream();
-            if (inputStream != null) {
-                Scanner scanner = new Scanner(inputStream);
-                scanner.useDelimiter("//A");
+            int responseCode = httpURLConnection.getResponseCode();
 
-                boolean hasNext = scanner.hasNext();
-                if (hasNext) {
-                    return (scanner.next());
-                } else {
-                    return null;
+            if(responseCode == HttpURLConnection.HTTP_OK) {
+                br = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+                if (br != null) {
+                    Scanner scanner = new Scanner(br);
+                    scanner.useDelimiter("//A");
+
+                    boolean hasNext = scanner.hasNext();
+                    if (hasNext) {
+                        return (scanner.next());
+                    } else {
+                        return null;
+                    }
                 }
-            }
-            else {
+
+            }else {
                 return null;
             }
         }finally {
-            // Close Stream and disconnect HTTPS connection.
-            if(inputStream!=null)
-            {
-                inputStream.close();
+            if(br!=null){
+                br.close();
             }
             if(httpURLConnection!=null) {
                 httpURLConnection.disconnect();
             }
         }
+        return null;
     }
+//    public static String getResponseFromHttpUrl(URL url) throws IOException
+//    {
+//        HttpURLConnection httpURLConnection = null;
+//        InputStream inputStream = null;
+//        try {
+//            httpURLConnection = (HttpURLConnection) url.openConnection();
+//            // Timeout for connection.connect() arbitrarily set to 3000ms.
+//            httpURLConnection.setConnectTimeout(3000);
+//            httpURLConnection.setReadTimeout(3000);
+//            // For this use case, set HTTP method to GET.
+//            httpURLConnection.setRequestMethod("GET");
+//            httpURLConnection.setAllowUserInteraction(false);
+//            httpURLConnection.setUseCaches(false);
+//            int responceCode = httpURLConnection.getResponseCode();
+//
+//
+//
+//            inputStream = httpURLConnection.getInputStream();
+//            if (inputStream != null) {
+//                Scanner scanner = new Scanner(inputStream);
+//                scanner.useDelimiter("//A");
+//
+//                boolean hasNext = scanner.hasNext();
+//                if (hasNext) {
+//                    return (scanner.next());
+//                } else {
+//                    return null;
+//                }
+//            }
+//            else {
+//                return null;
+//            }
+//        }finally {
+//            // Close Stream and disconnect HTTPS connection.
+//            if(inputStream!=null)
+//            {
+//                inputStream.close();
+//            }
+//            if(httpURLConnection!=null) {
+//                httpURLConnection.disconnect();
+//            }
+//        }
+//    }
 
     /**Function checks for the network connection. If network connection exists
      * return true else false;
@@ -207,8 +264,8 @@ public final class NetworkUtils {
     }
 
     //This function fetches movie data from the network.
-    public static ArrayList<MovieData> fetchMovieInfoFromNetwork(String sortBy){
-        URL url = NetworkUtils.buildURL(sortBy);
+    public static ArrayList<MovieData> fetchMovieInfoFromNetwork(String sortBy, int page){
+        URL url = NetworkUtils.buildURL(sortBy, page);
         try {
             jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(url);
             ArrayList<MovieData> simpleJsonMovieData = JsonMovieParserUtils.getSimpleMovieDataFromJson(jsonMoviesResponse);

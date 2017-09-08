@@ -31,13 +31,7 @@ public class MainActivity extends AppCompatActivity{
             mTwoPane = false;
         }
 
-
-        TabLayoutAdapter adapter = new TabLayoutAdapter(getSupportFragmentManager(), isTablet());
-
-
-        adapter.addFragment(getString(R.string.popular));
-        adapter.addFragment(getString(R.string.top_rated));
-        adapter.addFragment(getString(R.string.favourites));
+        TabLayoutAdapter adapter = new TabLayoutAdapter(this,getSupportFragmentManager(),isTablet());
         // Create an adapter that knows which fragment should be shown on each page
         // Set the adapter onto the view pager
         viewPager.setAdapter(adapter);
