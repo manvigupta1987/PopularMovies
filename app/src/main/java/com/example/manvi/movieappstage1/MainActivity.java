@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 
+import com.ToxicBakery.viewpager.transforms.AccordionTransformer;
+import com.ToxicBakery.viewpager.transforms.ScaleInOutTransformer;
+import com.ToxicBakery.viewpager.transforms.ZoomInTransformer;
 import com.example.manvi.movieappstage1.Adapter.TabLayoutAdapter;
 import com.example.manvi.movieappstage1.data.MovieDbHelper;
 
@@ -35,9 +38,11 @@ public class MainActivity extends AppCompatActivity{
         // Create an adapter that knows which fragment should be shown on each page
         // Set the adapter onto the view pager
         viewPager.setAdapter(adapter);
-
+        viewPager.setOffscreenPageLimit(1);
+        viewPager.setPageTransformer(true, new AccordionTransformer());
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     private boolean isTablet()

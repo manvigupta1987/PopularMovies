@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/manvi/.android/build-cache/645ff4f5fa02de4e5ff642efa06de4350ce7cdbb/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="392c97a8270ccf3cc7fe6e0a5d97a5e97a61e65c">
+        <dex dex="/home/manvi/gitRepos/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_1c30616aac95a103f5abcdb29ad5b99df101bb9b.jar" />
+    </item>
+
+</items>
