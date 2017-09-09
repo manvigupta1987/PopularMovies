@@ -55,6 +55,8 @@
         android:clickable="true"
         android:elevation="@dimen/fab_elevation"
         android:stateListAnimator="@animator/fab_anim"
+        app:pressedTranslationZ="12dp"
+        app:rippleColor="@android:color/white"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end">
 

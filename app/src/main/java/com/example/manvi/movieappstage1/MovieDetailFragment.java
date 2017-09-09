@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -18,9 +20,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +36,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +48,7 @@ import com.example.manvi.movieappstage1.Adapter.TrailerAdapter;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.example.manvi.movieappstage1.data.MovieContract;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -115,17 +122,6 @@ public class MovieDetailFragment extends Fragment implements
 
     private Context mContext;
     private MovieData mMovie;
-
-//    private String[] projection = {MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_BACKDROP,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_POSTER_PATH,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_TITLE,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_RELEASE_DATE,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_VOTE_COUNT,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_VOTE_AVG,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_LANG,
-//            MovieContract.MovieDataEntry.TABLE_NAME + "." + MovieContract.MovieDataEntry.COLUMN_MOVIE_ID,
-//            " group_concat(" + MovieContract.GenreList.TABLE_NAME + "."
-//                    + MovieContract.GenreList.COLUMN_GENRE_NAME + ", ', ' ) as name"};
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -382,14 +378,46 @@ public class MovieDetailFragment extends Fragment implements
 
             String backDropImagePath = mMovie.getBackDropPath(mContext);
             Picasso.with(getActivity()).load(backDropImagePath).placeholder(loading_backdrop)
-                    .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage);
+                .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage, new Callback() {
+            @Override
+            public void onSuccess() {
+                if(!mTablet){
+                    createPalette();
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+    //Sets Collapsing toolbar Color ContentScrim and StatusBar Scrim color based on the backdrop color swatches.
+    private void createPalette(){
+        Bitmap bitmap = ((BitmapDrawable) mBackDropImage.getDrawable()).getBitmap();
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                int primaryDark = ContextCompat.getColor(getContext(),R.color.colorPrimaryDark);
+                int primary = ContextCompat.getColor(getContext(),R.color.colorPrimary);
+                mCollapsingToolbar.setContentScrimColor(palette.getMutedColor(primary));
+                mCollapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
+                setStatusBarColor(palette.getDarkMutedColor(primaryDark));
+            }
+        });
+    }
 
 
-//            String genreIds = mMovie
-//            mMovieGenre.setText(genreIds);
-//            mMovieLanguage.setContentDescription(genreIds);
-
+    //Setting the color of status bar as per the backDrop image.
+    private void setStatusBarColor(int darkMutedColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getActivity().getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(darkMutedColor);
         }
+    }
 
 
     /*

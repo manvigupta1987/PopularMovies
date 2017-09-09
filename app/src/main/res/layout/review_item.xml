@@ -7,7 +7,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:lineSpacingMultiplier="1.2"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:id="@+id/Review_Author"
         android:textStyle="bold|italic"/>
 
@@ -16,5 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:padding="12dp" />  <!--Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable. -->
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:ellipsize="end"
+        android:lineSpacingMultiplier="1.2"
+        android:maxLines="15"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />  <!--Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable. -->
 </LinearLayout>
