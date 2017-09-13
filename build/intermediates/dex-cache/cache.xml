@@ -10,5 +10,14 @@
         sha1="392c97a8270ccf3cc7fe6e0a5d97a5e97a61e65c">
         <dex dex="/home/manvi/gitRepos/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_1c30616aac95a103f5abcdb29ad5b99df101bb9b.jar" />
     </item>
+    <item
+        is-multidex="false"
+        jar="/usr/local/android-studio/gradle/m2repository/com/google/guava/guava/18.0/guava-18.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="cce0823396aa693798f8882e64213b1772032b09">
+        <dex dex="/home/manvi/gitRepos/PopularMovies/app/build/intermediates/pre-dexed/debug/guava-18.0_e40471865835b7c50372e443685283dd5acf6433.jar" />
+    </item>
 
 </items>

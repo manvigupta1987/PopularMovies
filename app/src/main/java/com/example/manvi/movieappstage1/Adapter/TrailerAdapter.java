@@ -3,13 +3,12 @@ package com.example.manvi.movieappstage1.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.manvi.movieappstage1.Model.Trailer;
+import com.example.manvi.movieappstage1.data.Trailer;
 import com.example.manvi.movieappstage1.R;
 import com.squareup.picasso.Picasso;
 

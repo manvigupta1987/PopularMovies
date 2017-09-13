@@ -2,7 +2,6 @@ package com.example.manvi.movieappstage1;
 
 
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,11 +17,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DividerItemDecoration;
@@ -47,7 +43,7 @@ import com.example.manvi.movieappstage1.Adapter.ReviewAdapter;
 import com.example.manvi.movieappstage1.Adapter.TrailerAdapter;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
-import com.example.manvi.movieappstage1.data.MovieContract;
+import com.example.manvi.movieappstage1.data.Source.local.MovieContract;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -59,7 +55,7 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.example.manvi.movieappstage1.Model.MovieData;
+import com.example.manvi.movieappstage1.data.MovieData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -418,18 +414,6 @@ public class MovieDetailFragment extends Fragment implements
             window.setStatusBarColor(darkMutedColor);
         }
     }
-
-
-    /*
-        This function adds the movies into the favourite list.
-     */
-
-
-//    //This function deletes the movie from the favourite list
-//    public int deleteFromFavouritesClickListener(int movieId) {
-//        Uri uri = ContentUris.withAppendedId(MovieContract.FavoriteMovieEntry.CONTENT_URI, movieId);
-//        return (getContext().getContentResolver().delete(uri, null, null));
-//    }
 
     @Override
     public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {

@@ -3,11 +3,8 @@ package com.example.manvi.movieappstage1;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import com.example.manvi.movieappstage1.Model.MovieData;
+import com.example.manvi.movieappstage1.data.MovieData;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
-
-
-import java.util.ArrayList;
 
 /**
  * Created by manvi on 20/3/17.
@@ -34,8 +31,8 @@ public class FetchTrailerReviewFromNetwork extends AsyncTask<Uri, Void, MovieDat
 
         Uri uri = uris[0];
         String movieId = uri.getLastPathSegment();
-        MovieData movieData = NetworkUtils.fetchReviewsTrailersFromNetwork(movieId);
-        return movieData;
+       // MovieData movieData = NetworkUtils.fetchReviewsTrailersFromNetwork(movieId);
+        return null;
     }
 
     @Override

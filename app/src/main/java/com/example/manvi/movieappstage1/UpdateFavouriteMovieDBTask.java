@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.example.manvi.movieappstage1.Model.MovieData;
-import com.example.manvi.movieappstage1.data.MovieContract;
+import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Source.local.MovieContract;
 
 /**
  * Created by manvi on 7/9/17.

@@ -1,18 +1,14 @@
 package com.example.manvi.movieappstage1.Adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.manvi.movieappstage1.Model.Reviews;
-import com.example.manvi.movieappstage1.Model.Trailer;
+import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
