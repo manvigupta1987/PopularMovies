@@ -141,11 +141,6 @@ public class MovieDetailFragment extends Fragment implements
             if (args.containsKey(ConstantsUtils.TABLET_MODE)) {
                 mTablet = args.getBoolean(ConstantsUtils.TABLET_MODE);
             }
-            if(args.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
-                mMovie = args.getParcelable(ConstantsUtils.MOVIE_DETAIL);
-                mUri =   MovieContract.FavoriteMovieEntry.buildMovieDataUriWithMovieID(mMovie.getMovieID());
-                Log.d(TAG, "Received movie from getArguments() :  " + mMovie.toString());
-            }
         }
         return rootView;
     }
@@ -179,11 +174,13 @@ public class MovieDetailFragment extends Fragment implements
         mFloatingButton.setOnCheckedChangeListener(this);
 
         Bundle args = getArguments();
-        if (args!=null && args.containsKey(ConstantsUtils.DEFAULT_TEXT)) {
-            if (mTablet) {
-                showDefaultTextView();
-            }
-        }
+        if (args!=null) {
+
+            if (args.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
+                mMovie = args.getParcelable(ConstantsUtils.MOVIE_DETAIL);
+                mUri = MovieContract.FavoriteMovieEntry.buildMovieDataUriWithMovieID(mMovie.getMovieID());
+                Log.d(TAG, "Received movie from getArguments() :  " + mMovie.toString());
+
                 //In case of tablet, dont show back button on the action bar for the detail activity.
                 if (!mTablet) {
                     setupActionBar();
@@ -202,8 +199,13 @@ public class MovieDetailFragment extends Fragment implements
                 //start the loader for fetching the movie details from the data base.
                 //getLoaderManager().initLoader(ConstantsUtils.MOVIE_DETAIL_LOADER_ID, null, this);
                 setupMovieDetails();
-
+            } else if (args.containsKey(ConstantsUtils.DEFAULT_TEXT)) {
+                if (mTablet) {
+                    showDefaultTextView();
+                }
+            }
         }
+    }
 
     /* Setup the detail activity action Bar in case of phone layout */
     private void setupActionBar()
@@ -338,6 +340,7 @@ public class MovieDetailFragment extends Fragment implements
         if(mTablet) {
             showDetailView();
         }
+        if(mMovie !=null){
             mOverview.setText(mMovie.getOverview());
             String title = mMovie.getTitle();
             mCollapsingToolbar.setTitle(title);
@@ -378,19 +381,20 @@ public class MovieDetailFragment extends Fragment implements
 
             String backDropImagePath = mMovie.getBackDropPath(mContext);
             Picasso.with(getActivity()).load(backDropImagePath).placeholder(loading_backdrop)
-                .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage, new Callback() {
-            @Override
-            public void onSuccess() {
-                if(!mTablet){
-                    createPalette();
+                    .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage, new Callback() {
+                @Override
+                public void onSuccess() {
+                    if (!mTablet) {
+                        createPalette();
+                    }
                 }
-            }
 
-            @Override
-            public void onError() {
+                @Override
+                public void onError() {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     //Sets Collapsing toolbar Color ContentScrim and StatusBar Scrim color based on the backdrop color swatches.

@@ -10,7 +10,7 @@
         android:lineSpacingMultiplier="1.2"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:id="@+id/Review_Author"
         android:textStyle="bold|italic"/>
 
@@ -21,9 +21,8 @@
         android:layout_gravity="left"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="8dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:ellipsize="end"
         android:lineSpacingMultiplier="1.2"
-        android:maxLines="15"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />  <!--Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable. -->
+        android:maxLines="15" />  <!--Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable. -->
 </LinearLayout>

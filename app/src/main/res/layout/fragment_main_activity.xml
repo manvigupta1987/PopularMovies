@@ -25,5 +25,4 @@
         android:text="@string/no_fav"
         android:padding="@dimen/padding_dimen"
         android:gravity="center"/>
-
 </FrameLayout>

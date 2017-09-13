@@ -310,6 +310,7 @@
         android:text="@string/default_text"
         android:layout_gravity="center"
         android:padding="@dimen/padding_dimen"
+        android:textColor="@android:color/white"
         android:gravity="center"/>
 
 </android.support.design.widget.CoordinatorLayout>
