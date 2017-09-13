@@ -43,10 +43,10 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 ## Screens
 
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png" height=48 width = 48/>
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png" height=48 width =48/>
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png" height=48 width =48/>
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png" height=48 width = 48/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png" height=500/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png" height=500/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png" height=500/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png" height=500/>
 
 
 
