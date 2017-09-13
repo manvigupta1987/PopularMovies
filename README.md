@@ -1,6 +1,6 @@
 # Popular Movies App:
 
-This is afunctional and colorful android app which I made from scratch for Android Developer Nanodegree program. This app reveals the power of adaptive UI both for phone and tablet devices. 
+This is a functional and colorful android app which I made from scratch for Android Developer Nanodegree program. This app reveals the power of adaptive UI both for phone and tablet devices. 
 
 ## Features
 
@@ -13,7 +13,7 @@ With this app, User can:
 
 ### How to work with Source
 
-App uses The Movie Database API. You have to enter your API key in order to run the app. You can create your own one very easy! https://www.themoviedb.org/account/signup?language=en-EN. When you get it, just set it here: "MovieAppStage1/gradle.properties"
+App uses The Movie Database API. API key is required in order to run the app. You can create your own API key using the link ! https://www.themoviedb.org/account/signup?language=en-EN. When you get it, just set it here: "MovieAppStage1/gradle.properties"
 MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 ## Libraries
@@ -26,10 +26,10 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 * [Picasso](http://square.github.io/picasso/)
 * [Palette API](https://developer.android.com/training/material/palette-colors.html)
 * [Guava](https://github.com/google/guava)
-* [View Page](https://github.com/codepath/android_guides/wiki/ViewPager-with-FragmentPagerAdapter)
+
 
 ## UI Component
-* [View Page](https://github.com/codepath/android_guides/wiki/ViewPager-with-FragmentPagerAdapter)
+* [View Pager](https://github.com/codepath/android_guides/wiki/ViewPager-with-FragmentPagerAdapter)
 * [GridLayoutManager](https://developer.android.com/reference/android/support/v7/widget/GridLayoutManager.html)
 * [recyclerView](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html)
 * [CollapsingToolBar](https://developer.android.com/reference/android/support/design/widget/CollapsingToolbarLayout.html)
@@ -43,10 +43,9 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 ## Screens
 
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png" height=533 width =300/>
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png" height=533 width =300/>
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png" height=533 width =300/>
-<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png" height=533 width =300/>
+![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png) ![Screenshot2](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png) ![Screenshot3](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png)
+![Screenshot4](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png)
+
 
 
 
