@@ -1,6 +1,6 @@
 # Popular Movies App:
 
-This is a functional and colorful android app which I made from scratch for Android Developer Nanodegree program. This app reveals the power of adaptive UI both for phone and tablet devices. 
+This is afunctional and colorful android app which I made from scratch for Android Developer Nanodegree program. This app reveals the power of adaptive UI both for phone and tablet devices. 
 
 ## Features
 
@@ -15,13 +15,6 @@ With this app, User can:
 
 App uses The Movie Database API. You have to enter your API key in order to run the app. You can create your own one very easy! https://www.themoviedb.org/account/signup?language=en-EN. When you get it, just set it here: "MovieAppStage1/gradle.properties"
 MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
-
-
-## Screens
-
-![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png =250x250) ![Screenshot2](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png =250x250) ![Screenshot3](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png =250x250)
-![Screenshot4](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png =250x250)
-
 
 ## Libraries
 
@@ -47,6 +40,15 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 ## App Archtecture
 * [MVP Design Pattern](https://github.com/googlesamples/android-architecture/tree/todo-mvp/)
+
+## Screens
+
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png" height=480 width =270/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png" height=480 width =270/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png" height=480 width =270/>
+<img src="https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png" height=480 width =270/>
+
+
 
 
 
