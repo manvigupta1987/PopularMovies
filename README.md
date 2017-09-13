@@ -46,6 +46,7 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 ![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png) ![Screenshot2](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png) ![Screenshot3](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png)
 ![Screenshot4](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png)
 
+![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Selection_076_1.png) ![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Selection_077_1.png)
 
 
 
