@@ -1,13 +1,10 @@
 package com.example.manvi.movieappstage1.MoviesScreen;
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -65,7 +62,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
     private int mPage = 1;
     private MovieAdapter mMovieAdapter;
-    private  boolean mTablet;
+    private boolean mTablet;
     private String mFilterType;
     private ArrayList<MovieData> mDatasetList;
     public static final String SAVE_ALL_MOVIES_LIST = "ALL_MOVIES_LIST";
@@ -79,7 +76,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         MovieFragment fragmentFirst = new MovieFragment();
         Bundle args = new Bundle();
         args.putInt(ConstantsUtils.ARG_MOVIE_LIST, page);
-        args.putBoolean(ConstantsUtils.TABLET_MODE,isTablet);
+        args.putBoolean(ConstantsUtils.TABLET_MODE, isTablet);
         fragmentFirst.setArguments(args);
         return fragmentFirst;
     }
@@ -89,26 +86,25 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Bundle args = getArguments();
-        if(args!=null)
-        {
-            if(args.containsKey(ConstantsUtils.TABLET_MODE)) {
+        if (args != null) {
+            if (args.containsKey(ConstantsUtils.TABLET_MODE)) {
                 mTablet = args.getBoolean(ConstantsUtils.TABLET_MODE);
             }
         }
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             mDatasetList = new ArrayList<MovieData>();
             if (mTablet) {
                 //defaultFragment();
             }
         } else {
             mDatasetList = savedInstanceState.getParcelableArrayList(SAVE_ALL_MOVIES_LIST);
-            if(savedInstanceState.containsKey(ConstantsUtils.SAVED_LAYOUT_MANAGER)){
+            if (savedInstanceState.containsKey(ConstantsUtils.SAVED_LAYOUT_MANAGER)) {
                 //check if the scroll position of a layout manager is saved, reterive it.
                 //Referred from http://panavtec.me/retain-restore-recycler-view-scroll-position
                 mRecylerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(ConstantsUtils.SAVED_LAYOUT_MANAGER));
             }
-            if(savedInstanceState.containsKey(ConstantsUtils.TABLET_MODE)){
+            if (savedInstanceState.containsKey(ConstantsUtils.TABLET_MODE)) {
                 mTablet = savedInstanceState.getBoolean(ConstantsUtils.TABLET_MODE);
             }
         }
@@ -123,26 +119,26 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
         int columns = calculateColumnsBasedOnScreenSize();
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),columns);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), columns);
         mRecylerView.setLayoutManager(gridLayoutManager);
         mRecylerView.setHasFixedSize(true);
 
-        mMovieAdapter = new MovieAdapter(getActivity(),this, mDatasetList);
+        mMovieAdapter = new MovieAdapter(getActivity(), this, mDatasetList);
 
         mRecylerView.setAdapter(mMovieAdapter);
+
 
         mRecylerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
-                if (dy > 0) {
-                    int visibleItemCount = recyclerView.getChildCount();
-                    int totalItemCount = recyclerView.getLayoutManager().getItemCount();
-                    int pastVisibleItem =
-                            ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                    if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
-                        if(!mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)) {
+                if (!mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)) {
+                    if (dy > 0) {
+                        int visibleItemCount = recyclerView.getChildCount();
+                        int totalItemCount = recyclerView.getLayoutManager().getItemCount();
+                        int pastVisibleItem =
+                                ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                        if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
                             if (NetworkUtils.isNetworkConnectionAvailable(getActivity())) {
                                 mPage++;
                                 mPresenter.loadMovies(mPage);
@@ -162,8 +158,8 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         mPresenter.start(mPage);
     }
 
-    private void setToolBarTitle(){
-        switch (mFilterType){
+    private void setToolBarTitle() {
+        switch (mFilterType) {
             case ConstantsUtils.POPULAR_MOVIE:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mostPopularMovies);
                 break;
@@ -219,10 +215,6 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     public void showFilteringPopUpMenu() {
         PopupMenu popup = new PopupMenu(getContext(), getActivity().findViewById(R.id.menu_filter));
         popup.getMenuInflater().inflate(R.menu.filter_movies, popup.getMenu());
-
-        if(mDatasetList!=null){
-            mDatasetList.clear();
-        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -244,6 +236,10 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
                     default:
                         break;
                 }
+                if (mDatasetList != null) {
+                    mDatasetList.clear();
+                    mMovieAdapter.notifyDataSetChanged();
+                }
                 mPresenter.loadMovies(1);
                 return true;
             }
@@ -252,32 +248,34 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     }
 
 
-
     @Override
     public void setLoadingIndicator(boolean active) {
-        if(active) {
+        if (active) {
             mRecylerView.setVisibility(View.INVISIBLE);
             mLoadingBar.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             mRecylerView.setVisibility(View.VISIBLE);
             mLoadingBar.setVisibility(View.INVISIBLE);
         }
     }
 
 
-
     @Override
     public void showMovies(ArrayList<MovieData> movieList) {
-        if(mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)){
+        if (mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)) {
             mDatasetList.clear();
         }
+        int size = 0 ;
+        int itemCount = 0;
         if (movieList != null && movieList.size() != 0) {
+            size = mDatasetList.size();
+            itemCount = movieList.size();
             for (MovieData movieData : movieList) {
                 mDatasetList.add(movieData);
             }
         }
         //mDatasetList.addAll(movieList);
-        mMovieAdapter.notifyDataSetChanged();
+        mMovieAdapter.notifyItemRangeInserted(size, itemCount);
 
         mRecylerView.setVisibility(View.VISIBLE);
         mLoadingBar.setVisibility(View.INVISIBLE);
@@ -288,14 +286,12 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         Bundle bundle = new Bundle();
         bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
 
-        if(!mTablet) {
+        if (!mTablet) {
             Intent intent = new Intent(getActivity(), MovieDetailScreenActivity.class);
             intent.putExtras(bundle);
-            intent.putExtra(ConstantsUtils.TABLET_MODE,mTablet);
+            intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
             startActivity(intent);
-        }
-        else
-        {
+        } else {
             //replaceFragment(movieData);
         }
     }
@@ -321,24 +317,22 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     }
 
 
-
     /*
         This function calculates the number of columns to be displyed in the grid.
         return Param: Number of Columns.
      */
-    private int calculateColumnsBasedOnScreenSize()
-    {
+    private int calculateColumnsBasedOnScreenSize() {
         //Calculate device screen size and decides for the number of columns that can be displayed in the grid.
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
 
-        float density  = getResources().getDisplayMetrics().density;
-        float dpWidth  = outMetrics.widthPixels / density;
+        float density = getResources().getDisplayMetrics().density;
+        float dpWidth = outMetrics.widthPixels / density;
         int columns;
-        if(!mTablet) {
+        if (!mTablet) {
             columns = Math.round(dpWidth / 200);
-        }else {
+        } else {
             columns = Math.round(dpWidth / 500);
         }
 
@@ -349,7 +343,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     public void onSaveInstanceState(Bundle outState) {
         //to store the scroll position of layout manager.
         outState.putParcelable(ConstantsUtils.SAVED_LAYOUT_MANAGER, mRecylerView.getLayoutManager().onSaveInstanceState());
-        outState.putBoolean(ConstantsUtils.TABLET_MODE,mTablet);
+        outState.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
         ArrayList<MovieData> dataList = mMovieAdapter.getDataSetList();
         if (dataList != null && !dataList.isEmpty()) {
             outState.putParcelableArrayList(SAVE_ALL_MOVIES_LIST, dataList);

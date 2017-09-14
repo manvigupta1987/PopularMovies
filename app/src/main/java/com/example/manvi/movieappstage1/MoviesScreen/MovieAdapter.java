@@ -52,9 +52,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void onBindViewHolder(MovieAdapterViewHolder holder, final int position)
     {
         if(mDatasetList!=null) {
-            holder.mTVTitle.setText(mDatasetList.get(position).getTitle());
-            holder.mTVRating.setText(String.valueOf(mDatasetList.get(position).getVoteAvgCount()));
-            String poster = mDatasetList.get(position).getPoster_path();
+            MovieData movieData = mDatasetList.get(position);
+            holder.mTVTitle.setText(movieData.getTitle());
+            holder.mTVRating.setText(String.valueOf(movieData.getVoteAvgCount()));
+            String poster = movieData.getPoster_path();
             if (poster != null) {
                 //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
                 Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)
@@ -73,12 +74,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         }
     }
 
-    public void setDatasetList(ArrayList<MovieData> dataList){
-        mDatasetList = dataList;
-        if(mDatasetList!=null){
-            notifyDataSetChanged();
-        }
-    }
 
     public ArrayList<MovieData> getDataSetList(){
         return mDatasetList;
