@@ -20,11 +20,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetailsActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".MovieDetailScreen.MovieDetailScreenActivity"
+            android:parentActivityName=".MoviesScreen.MovieScreenActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MoviesScreen.MovieScreenActivity" />
         </activity>
     </application>
 </manifest>

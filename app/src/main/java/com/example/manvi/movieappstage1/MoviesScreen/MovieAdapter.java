@@ -54,7 +54,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         if(mDatasetList!=null) {
             holder.mTVTitle.setText(mDatasetList.get(position).getTitle());
             holder.mTVRating.setText(String.valueOf(mDatasetList.get(position).getVoteAvgCount()));
-            String poster = mDatasetList.get(position).getPoster_path(mContext);
+            String poster = mDatasetList.get(position).getPoster_path();
             if (poster != null) {
                 //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
                 Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)

@@ -1,6 +1,7 @@
 package com.example.manvi.movieappstage1.data.Source.remote;
 
 import android.content.Context;
+import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -31,8 +32,8 @@ public class MoviesRemoteDataSource implements MovieDataSource{
 
     private static MoviesRemoteDataSource INSTANCE;
     private static String mMoviesData;
-    private static Context mContext;
     private LoadMoviesCallback mMoviesCallBack;
+    private GetMovieCallback mMovieCallBack;
 
 
 
@@ -60,21 +61,10 @@ public class MoviesRemoteDataSource implements MovieDataSource{
     }
 
 
-    public void getReviewsTrailers(String movieId, @NonNull GetMovieCallback callback){
-        URL url = MovieResponseParser.buildURLForReviewTrailers(movieId);
-        MovieData reviewsTrailers = null;
-        try {
-            String jsonGenreResponse = MovieResponseParser.getResponseFromHttpUrl(url);
-            reviewsTrailers = MovieResponseParser.getTrailerReviewsFromJson(jsonGenreResponse);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        if(reviewsTrailers!=null){
-            callback.onTaskLoaded(reviewsTrailers);
-        }else {
-            callback.onDataNotAvailable();
-        }
+    public void getReviewsTrailers(Long movieId, @NonNull GetMovieCallback callback){
+        URL url = MovieResponseParser.buildURLForReviewTrailers(movieId.toString());
+        mMovieCallBack = callback;
+        new LoadMovieTask().execute(url);
     }
 
     @Override
@@ -93,9 +83,10 @@ public class MoviesRemoteDataSource implements MovieDataSource{
     }
 
     @Override
-    public void deleteMovie(@NonNull String movieId) {
+    public void deleteMovie(@NonNull MovieData movieData) {
 
     }
+
 
     class LoadMoviesTask extends AsyncTask<URL, Void, ArrayList<MovieData>> {
         ArrayList<MovieData> movieDataList;
@@ -118,6 +109,31 @@ public class MoviesRemoteDataSource implements MovieDataSource{
                 mMoviesCallBack.onMoviesLoaded(movieDataList);
             } else {
                 mMoviesCallBack.onDataNotAvailable();
+            }
+        }
+    }
+
+    class LoadMovieTask extends AsyncTask<URL, Void, MovieData> {
+        MovieData movieData;
+
+        @Override
+        protected MovieData doInBackground(URL... params) {
+            try {
+                String jsonGenreResponse = MovieResponseParser.getResponseFromHttpUrl(params[0]);
+                movieData = MovieResponseParser.getTrailerReviewsFromJson(jsonGenreResponse);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return movieData;
+        }
+
+        @Override
+        protected void onPostExecute(MovieData movieData) {
+            super.onPostExecute(movieData);
+            if (movieData != null) {
+                mMovieCallBack.onTaskLoaded(movieData);
+            } else {
+                mMovieCallBack.onDataNotAvailable();
             }
         }
     }

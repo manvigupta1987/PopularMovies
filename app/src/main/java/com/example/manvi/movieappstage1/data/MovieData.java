@@ -16,6 +16,9 @@ import java.util.ArrayList;
 public class MovieData implements Parcelable {
 
     private final String TAG = MovieData.class.getSimpleName();
+    private final String BASE_URL = "http://image.tmdb.org/t/p/";
+    private final String BACKDROP_SIZE = "w342";
+    private final String POSTER_SIZE = "w185";
 
     private int mMovieId;
     private String mBackDropPath;
@@ -87,12 +90,11 @@ public class MovieData implements Parcelable {
         return this.mVoteCount;
     }
 
-    public String getBackDropPath(Context context)
+    public String getBackDropPath()
     {
-        Resources res= context.getResources();
         if(mBackDropPath!=null && !mBackDropPath.equals(""))
         {
-            String poster_path = res.getString(R.string.base_url_for_downloading_movie_poster) + res.getString(R.string.backDrop_poster_size) + mBackDropPath;
+            String poster_path = BASE_URL + BACKDROP_SIZE + mBackDropPath;
             return (poster_path);
         }
         else
@@ -103,12 +105,11 @@ public class MovieData implements Parcelable {
 
 
     //returns the complete path of the image poster.
-    public String getPoster_path(Context context)
+    public String getPoster_path()
     {
-        Resources res= context.getResources();
         if(mPoster!=null && !mPoster.equals(""))
         {
-            String poster_path = res.getString(R.string.base_url_for_downloading_movie_poster) + res.getString(R.string.movie_poster_size) + mPoster;
+            String poster_path = BASE_URL + POSTER_SIZE + mPoster;
             return (poster_path);
         }
         else

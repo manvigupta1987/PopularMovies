@@ -35,7 +35,7 @@ public interface MovieDataSource {
 
     void deleteAllMovies();
 
-    void deleteMovie(@NonNull String movieId);
+    void deleteMovie(@NonNull MovieData movieData);
 
-    void getReviewsTrailers(String movieId, @NonNull GetMovieCallback callback);
+    void getReviewsTrailers(Long movieId, @NonNull GetMovieCallback callback);
 }

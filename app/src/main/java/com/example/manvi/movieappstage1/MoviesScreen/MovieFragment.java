@@ -24,8 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.manvi.movieappstage1.MovieDetailFragment;
-import com.example.manvi.movieappstage1.MovieDetailsActivity;
+import com.example.manvi.movieappstage1.MovieDetailScreen.MovieDetailScreenActivity;
 import com.example.manvi.movieappstage1.R;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
@@ -68,11 +67,9 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     private MovieAdapter mMovieAdapter;
     private  boolean mTablet;
     private String mFilterType;
-   // private int mTabPosition;
-//    private ArrayList<MovieData> mFavDataList;
     private ArrayList<MovieData> mDatasetList;
     public static final String SAVE_ALL_MOVIES_LIST = "ALL_MOVIES_LIST";
-    public static final String SAVE_FAV_MOVIES_LIST = "FAV_MOVIES_LIST";
+
 
     public MovieFragment() {
         // Requires empty public constructor
@@ -87,12 +84,6 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         return fragmentFirst;
     }
 
-//    public static MovieFragment newInstance() {
-//        MovieFragment fragmentFirst = new MovieFragment();
-//        return fragmentFirst;
-//    }
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,32 +91,18 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         Bundle args = getArguments();
         if(args!=null)
         {
-//            if(args.containsKey(ConstantsUtils.ARG_MOVIE_LIST)) {
-//                mTabPosition = args.getInt(ConstantsUtils.ARG_MOVIE_LIST);
-//            }
             if(args.containsKey(ConstantsUtils.TABLET_MODE)) {
                 mTablet = args.getBoolean(ConstantsUtils.TABLET_MODE);
             }
         }
 
         if(savedInstanceState == null) {
-//            if (mTabPosition == ConstantsUtils.FAVOURITE_TAB) {
-//                mFavDataList = new ArrayList<MovieData>();
-//            } else {
-//
-//            }
             mDatasetList = new ArrayList<MovieData>();
             if (mTablet) {
-                defaultFragment();
+                //defaultFragment();
             }
         } else {
             mDatasetList = savedInstanceState.getParcelableArrayList(SAVE_ALL_MOVIES_LIST);
-//            if(mTabPosition == ConstantsUtils.FAVOURITE_TAB){
-//                mFavDataList = savedInstanceState.getParcelableArrayList(SAVE_FAV_MOVIES_LIST);
-//            } else {
-//
-//            }
-
             if(savedInstanceState.containsKey(ConstantsUtils.SAVED_LAYOUT_MANAGER)){
                 //check if the scroll position of a layout manager is saved, reterive it.
                 //Referred from http://panavtec.me/retain-restore-recycler-view-scroll-position
@@ -143,7 +120,6 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         super.onActivityCreated(savedInstanceState);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(mtoolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mostPopularMovies);
 
         int columns = calculateColumnsBasedOnScreenSize();
 
@@ -182,7 +158,24 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     public void onResume() {
         super.onResume();
         mFilterType = mPresenter.getFiltering();
+        setToolBarTitle();
         mPresenter.start(mPage);
+    }
+
+    private void setToolBarTitle(){
+        switch (mFilterType){
+            case ConstantsUtils.POPULAR_MOVIE:
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mostPopularMovies);
+                break;
+            case ConstantsUtils.TOP_RATED_MOVIE:
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(topRatedMovies);
+                break;
+            case ConstantsUtils.FAVORITE_MOVIE:
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(myFavoriteMovies);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -275,6 +268,9 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
     @Override
     public void showMovies(ArrayList<MovieData> movieList) {
+        if(mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)){
+            mDatasetList.clear();
+        }
         if (movieList != null && movieList.size() != 0) {
             for (MovieData movieData : movieList) {
                 mDatasetList.add(movieData);
@@ -293,30 +289,30 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
 
         if(!mTablet) {
-            Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
+            Intent intent = new Intent(getActivity(), MovieDetailScreenActivity.class);
             intent.putExtras(bundle);
             intent.putExtra(ConstantsUtils.TABLET_MODE,mTablet);
             startActivity(intent);
         }
         else
         {
-            replaceFragment(movieData);
+            //replaceFragment(movieData);
         }
     }
 
     /*
         In case of tablet mode, this functions show the detail fragment on the right side of pane.
      */
-    private void replaceFragment(MovieData movieData) {
-        Bundle args = new Bundle();
-        args.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
-        args.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
-
-        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-        movieDetailFragment.setArguments(args);
-
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, movieDetailFragment).commit();
-    }
+//    private void replaceFragment(MovieData movieData) {
+//        Bundle args = new Bundle();
+//        args.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
+//        args.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
+//
+//        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+//        movieDetailFragment.setArguments(args);
+//
+//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, movieDetailFragment).commit();
+//    }
 
 
     @Override
@@ -361,14 +357,14 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         super.onSaveInstanceState(outState);
     }
 
-    private void defaultFragment(){
-        if(mTablet) {
-            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-            Bundle args = new Bundle();
-            args.putString(ConstantsUtils.DEFAULT_TEXT, getString(R.string.default_text));
-            args.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
-            movieDetailFragment.setArguments(args);
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, movieDetailFragment).commit();
-        }
-    }
+//    private void defaultFragment(){
+//        if(mTablet) {
+//            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+//            Bundle args = new Bundle();
+//            args.putString(ConstantsUtils.DEFAULT_TEXT, getString(R.string.default_text));
+//            args.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
+//            movieDetailFragment.setArguments(args);
+//            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, movieDetailFragment).commit();
+//        }
+//    }
 }

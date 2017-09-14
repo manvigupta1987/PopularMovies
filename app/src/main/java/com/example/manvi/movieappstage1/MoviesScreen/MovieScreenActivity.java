@@ -22,6 +22,8 @@ import com.example.manvi.movieappstage1.data.Source.remote.MoviesRemoteDataSourc
 public class MovieScreenActivity extends AppCompatActivity {
 
     private MoviesPresenter mMoviesPresenter;
+    public static final String FILTER_TYPE = "filter_type";
+
     private boolean mTwoPane; //to check if Tablet layout is required.
 
     @Override
@@ -37,15 +39,6 @@ public class MovieScreenActivity extends AppCompatActivity {
             mTwoPane = false;
         }
 
-//        TabLayoutAdapter adapter = new TabLayoutAdapter(this,getSupportFragmentManager(),isTablet());
-//        // Create an adapter that knows which fragment should be shown on each page
-//        // Set the adapter onto the view pager
-//        viewPager.setAdapter(adapter);
-//        viewPager.setOffscreenPageLimit(1);
-//        viewPager.setPageTransformer(true, new AccordionTransformer());
-//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-//        tabLayout.setupWithViewPager(viewPager);
-
         MovieFragment tasksFragment =
                 (MovieFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
@@ -59,8 +52,18 @@ public class MovieScreenActivity extends AppCompatActivity {
         MovieRepository movieRepository = MovieRepository.getInstance(MoviesRemoteDataSource.getInstance(),
                 MoviesLocalDataSource.getInstance(getApplicationContext()));
 
-        //mMoviesPresenter = new MoviesPresenter(movieRepository, (MovieFragment)adapter.getItem(viewPager.getCurrentItem()));
         mMoviesPresenter = new MoviesPresenter(movieRepository, tasksFragment );
+        // Load previously saved state, if available.
+        if (savedInstanceState != null) {
+            String currentFiltering = savedInstanceState.getString(FILTER_TYPE);
+            mMoviesPresenter.setFiltering(currentFiltering);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(FILTER_TYPE, mMoviesPresenter.getFiltering());
+        super.onSaveInstanceState(outState);
     }
 
     private boolean isTablet()

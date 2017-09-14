@@ -27,6 +27,7 @@ public class MoviesLocalDataSource implements MovieDataSource {
     private MovieDbHelper mDbHelper;
     private Context mContext;
     private LoadMoviesCallback mMoviesCallBack;
+    private GetMovieCallback mMovieCallBack;
 
     // Prevent direct instantiation.
     private MoviesLocalDataSource(@NonNull Context context) {
@@ -52,51 +53,8 @@ public class MoviesLocalDataSource implements MovieDataSource {
 
     @Override
     public void getMovie(@NonNull String movieId, @NonNull GetMovieCallback callback) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        String[] projection = {
-                MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID,
-                MovieContract.FavoriteMovieEntry.COLUMN_TITLE,
-                MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP,
-                MovieContract.FavoriteMovieEntry.COLUMN_LANG,
-                MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW,
-                MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE,
-                MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH,
-                MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY,
-                MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG };
-
-        String selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
-        String[] selectionArgs = { movieId };
-
-        Cursor cursor = db.query(
-                MovieContract.FavoriteMovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
-
-        MovieData movieData = null;
-
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            movieData = new MovieData(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
-                    cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
-                    cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
-                    cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
-                    cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH)),
-                    cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW)),
-                    cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE)),
-                    cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG)),
-                    cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY)),
-                    cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT)));
-        }
-        if (cursor != null) {
-            cursor.close();
-        }
-
-        db.close();
-
-        if (movieData != null) {
-            callback.onTaskLoaded(movieData);
-        } else {
-            callback.onDataNotAvailable();
-        }
+        mMovieCallBack = callback;
+        new LoadFavoriteMovieTask().execute(movieId);
     }
 
     @Override
@@ -126,11 +84,12 @@ public class MoviesLocalDataSource implements MovieDataSource {
     }
 
     @Override
-    public void deleteMovie(@NonNull String movieId) {
+    public void deleteMovie(@NonNull MovieData movieData) {
+        Long movieId = movieData.getMovieID();
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
-        String[] selectionArgs = { movieId };
+        String[] selectionArgs = { movieId.toString() };
 
         db.delete(MovieContract.FavoriteMovieEntry.TABLE_NAME, selection, selectionArgs);
 
@@ -138,7 +97,7 @@ public class MoviesLocalDataSource implements MovieDataSource {
     }
 
     @Override
-    public void getReviewsTrailers(String movieId, @NonNull GetMovieCallback callback) {
+    public void getReviewsTrailers(Long movieId, @NonNull GetMovieCallback callback) {
 
     }
 
@@ -195,6 +154,65 @@ public class MoviesLocalDataSource implements MovieDataSource {
                 mMoviesCallBack.onDataNotAvailable();
             } else {
                 mMoviesCallBack.onMoviesLoaded(datalist);
+            }
+        }
+    }
+
+
+    private class LoadFavoriteMovieTask extends AsyncTask<String, Void, MovieData> {
+        @Override
+        protected MovieData doInBackground(String... params) {
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+            String[] projection = {
+                    MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID,
+                    MovieContract.FavoriteMovieEntry.COLUMN_TITLE,
+                    MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP,
+                    MovieContract.FavoriteMovieEntry.COLUMN_LANG,
+                    MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW,
+                    MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE,
+                    MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH,
+                    MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY,
+                    MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG,
+                    MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT};
+
+            String selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
+            String[] selectionArgs = { params[0]};
+
+            Cursor cursor = db.query(
+                    MovieContract.FavoriteMovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+            MovieData movieData = null;
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                movieData = new MovieData(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE)),
+                        cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG)),
+                        cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY)),
+                        cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT)));
+            }
+            if (cursor != null) {
+                cursor.close();
+            }
+
+            db.close();
+            return movieData;
+        }
+
+        @Override
+        protected void onPostExecute(MovieData movieData) {
+            super.onPostExecute(movieData);
+            if (movieData!=null) {
+                // This will be called if the table is new or just empty.
+                mMovieCallBack.onTaskLoaded(movieData);
+            } else {
+                mMovieCallBack.onDataNotAvailable();
             }
         }
     }

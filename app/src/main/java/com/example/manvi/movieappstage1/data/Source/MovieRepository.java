@@ -117,13 +117,13 @@ public class MovieRepository implements MovieDataSource {
     }
 
     @Override
-    public void deleteMovie(@NonNull String movieId) {
-        checkNotNull(movieId);
-        mMoviesLocalDataSource.deleteMovie(movieId);
+    public void deleteMovie(@NonNull MovieData movieData) {
+        checkNotNull(movieData);
+        mMoviesLocalDataSource.deleteMovie(movieData);
     }
 
     @Override
-    public void getReviewsTrailers(String movieId, @NonNull final GetMovieCallback callback) {
+    public void getReviewsTrailers(Long movieId, @NonNull final GetMovieCallback callback) {
         checkNotNull(movieId);
         checkNotNull(callback);
         mMoviesRemoteDataSource.getReviewsTrailers(movieId,new GetMovieCallback() {
