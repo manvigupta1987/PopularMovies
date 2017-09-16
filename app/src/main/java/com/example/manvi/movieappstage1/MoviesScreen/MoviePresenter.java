@@ -2,6 +2,7 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 
 
 import android.support.annotation.NonNull;
+import android.view.View;
 
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
@@ -76,9 +77,9 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
     }
 
     @Override
-    public void openMovieDetails(Movie movie) {
+    public void openMovieDetails(Movie movie, MovieScreenContract.View view) {
         checkNotNull(movie, "requestedMovie cannot be null!");
-        mMoviesView.showMovieDetailsUI(movie);
+        mMoviesView.showMovieDetailsUI(movie, view);
     }
 
     @Override

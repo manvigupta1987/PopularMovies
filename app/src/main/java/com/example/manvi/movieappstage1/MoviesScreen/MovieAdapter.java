@@ -3,12 +3,17 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,7 +50,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public interface ListItemClickListener {
-        void onItemClicked(Movie movie);
+        void onItemClicked(Movie movie, View view);
     }
 
 
@@ -76,7 +81,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             @Override
                             public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
                                 super.onResourceReady(bitmap, anim);
-
+                                scheduleStartPostponedTransition(holder.mMovieImage);
                                 Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                                     @Override
                                     public void onGenerated(Palette palette) {
@@ -87,7 +92,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             }
                         });
             }
+            ViewCompat.setTransitionName(holder.mMovieImage, mContext.getString(R.string.transition_string) + position);
         }
+    }
+
+    private void scheduleStartPostponedTransition(final View sharedElement) {
+        sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            ((AppCompatActivity)mContext).startPostponedEnterTransition();
+                        }
+                        return true;
+                    }
+                });
     }
 
 
@@ -127,7 +147,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             int itemPosition = getAdapterPosition();
             if (itemPosition != RecyclerView.NO_POSITION) {
                 Movie movie = mDatasetList.get(itemPosition);
-                mlistItemClickListener.onItemClicked(movie);
+                mlistItemClickListener.onItemClicked(movie, view);
             }
         }
     }

@@ -37,9 +37,10 @@
     <string name="no_internet">No Internet Connection</string>
     <string name="dismiss">Dismiss</string>
 
-    <string name="most_popular_movies">Most Popular</string>
-    <string name="top_rated_movies">Top Rated</string>
-    <string name="my_favorite_movies">My Favorite Movies</string>
+    <string name="most_popular_movies">Popular Movies</string>
+    <string name="top_rated_movies">Top Rated Movies</string>
+    <string name="my_favorite_movies">My Favorites</string>
 
     <string name="sendto">SHARE WITH FRIENDS</string>
+    <string name="transition_string">MyImage</string>
 </resources>

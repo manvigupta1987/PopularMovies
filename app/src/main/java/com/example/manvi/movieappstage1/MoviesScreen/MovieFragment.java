@@ -1,10 +1,16 @@
 package com.example.manvi.movieappstage1.MoviesScreen;
 
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -81,6 +87,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         return fragmentFirst;
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,13 +159,17 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         super.onResume();
         mFilterType = mPresenter.getFiltering();
         setToolBarTitle();
-        mPresenter.subscribe();
+        if(mDatasetList!=null && mDatasetList.isEmpty()) {
+            mPresenter.subscribe();
+        }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPause() {
         super.onPause();
         mPresenter.unsubscribe();
+        getActivity().getWindow().setEnterTransition(null);
     }
 
     private void setToolBarTitle() {
@@ -280,19 +291,30 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         mNoFavMovie.setVisibility(View.INVISIBLE);
     }
 
+
     @Override
-    public void showMovieDetailsUI(Movie movie) {
+    public void showMovieDetailsUI(Movie movie, MovieScreenContract.View view) {
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movie);
+//        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+//        intent.putExtras(bundle);
+//        intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
+//        String transitionName = getString(R.string.transition_string);
+//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),transitionName);
+//        startActivity(intent);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onItemClicked(Movie movie, View view) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movie);
         Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
         intent.putExtras(bundle);
         intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onItemClicked(Movie movie) {
-        mPresenter.openMovieDetails(movie);
+        String transitionName = getString(R.string.transition_string);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),view,transitionName);
+        ActivityCompat.startActivity(getActivity(),intent,options.toBundle());
     }
 
 

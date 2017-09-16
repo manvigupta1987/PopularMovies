@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
@@ -127,10 +128,12 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onResume() {
         super.onResume();
         mPresenter.subscribe();
+        getActivity().getWindow().setExitTransition(null);
     }
 
     @Override
@@ -304,21 +307,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                         });
                     }
                 });
-//        Picasso.with(getActivity()).load(backDropImagePath).placeholder(loading_backdrop)
-//                .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage, new Callback() {
-//            @Override
-//            public void onSuccess() {
-//                if(!mTablet){
-//                    createPalette();
-//                }
-//            }
-//
-//            @Override
-//            public void onError() {
-//
-//            }
-//        });
-
 
     }
 

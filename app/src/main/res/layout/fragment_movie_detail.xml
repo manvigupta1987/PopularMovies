@@ -98,6 +98,7 @@
                         android:layout_height="match_parent"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/movie_image"
+                        android:transitionName="@string/transition_string"
                         android:scaleType="fitXY" />
 
                     <LinearLayout

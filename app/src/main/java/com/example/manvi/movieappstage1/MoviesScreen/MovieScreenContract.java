@@ -15,13 +15,13 @@ public interface MovieScreenContract {
     interface View extends BaseView<Presenter>{
         void setLoadingIndicator(boolean active);
         void showMovies(ArrayList<Movie> movieList);
-        void showMovieDetailsUI(Movie movie);
+        void showMovieDetailsUI(Movie movie, View view);
         void showNoFavMovieError();
     }
 
     interface Presenter extends BasePresenter{
         void loadMovies(int page);
-        void openMovieDetails(Movie movie);
+        void openMovieDetails(Movie movie, View view);
         void setFiltering(String tabType);
         String getFiltering();
     }
