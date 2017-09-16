@@ -2,8 +2,6 @@ package com.example.manvi.movieappstage1.MovieDetailScreen;
 
 import com.example.manvi.movieappstage1.BasePresenter;
 import com.example.manvi.movieappstage1.BaseView;
-import com.example.manvi.movieappstage1.MoviesScreen.MovieScreenContract;
-import com.example.manvi.movieappstage1.data.MovieData;
 import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Trailer;
 
@@ -34,7 +32,8 @@ public interface MovieDetailContract {
     }
 
     interface Presenter extends BasePresenter{
-        void loadReviewsNTrailer();
+        void loadReviews();
+        void loadTrailers();
         void addMovieToFavourite();
         void removeMovieFromFavourite();
         void checkForFavouriteMovie();

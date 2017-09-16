@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    private final String TAG = MovieAdapter.class.getSimpleName();
     private ArrayList<MovieData> mDatasetList;
 
     private Context mContext;

@@ -5,5 +5,7 @@ package com.example.manvi.movieappstage1;
  */
 
 public interface BasePresenter {
-    void start(int page);
+    void subscribe();
+
+    void unsubscribe();
 }

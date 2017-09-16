@@ -94,9 +94,6 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
         if (savedInstanceState == null) {
             mDatasetList = new ArrayList<MovieData>();
-            if (mTablet) {
-                //defaultFragment();
-            }
         } else {
             mDatasetList = savedInstanceState.getParcelableArrayList(SAVE_ALL_MOVIES_LIST);
             if (savedInstanceState.containsKey(ConstantsUtils.SAVED_LAYOUT_MANAGER)) {
@@ -155,7 +152,13 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         super.onResume();
         mFilterType = mPresenter.getFiltering();
         setToolBarTitle();
-        mPresenter.start(mPage);
+        mPresenter.subscribe();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
     }
 
     private void setToolBarTitle() {
@@ -265,51 +268,27 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         if (mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)) {
             mDatasetList.clear();
         }
-        int size = 0 ;
-        int itemCount = 0;
         if (movieList != null && movieList.size() != 0) {
-            size = mDatasetList.size();
-            itemCount = movieList.size();
             for (MovieData movieData : movieList) {
                 mDatasetList.add(movieData);
             }
         }
-        //mDatasetList.addAll(movieList);
-        mMovieAdapter.notifyItemRangeInserted(size, itemCount);
 
+        mMovieAdapter.notifyDataSetChanged();
         mRecylerView.setVisibility(View.VISIBLE);
         mLoadingBar.setVisibility(View.INVISIBLE);
+        mNoFavMovie.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showMovieDetailsUI(MovieData movieData) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
-
-        if (!mTablet) {
-            Intent intent = new Intent(getActivity(), MovieDetailScreenActivity.class);
-            intent.putExtras(bundle);
-            intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
-            startActivity(intent);
-        } else {
-            //replaceFragment(movieData);
-        }
+        Intent intent = new Intent(getActivity(), MovieDetailScreenActivity.class);
+        intent.putExtras(bundle);
+        intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
+        startActivity(intent);
     }
-
-    /*
-        In case of tablet mode, this functions show the detail fragment on the right side of pane.
-     */
-//    private void replaceFragment(MovieData movieData) {
-//        Bundle args = new Bundle();
-//        args.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
-//        args.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
-//
-//        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-//        movieDetailFragment.setArguments(args);
-//
-//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, movieDetailFragment).commit();
-//    }
-
 
     @Override
     public void onItemClicked(MovieData movie) {
@@ -350,15 +329,4 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         }
         super.onSaveInstanceState(outState);
     }
-
-//    private void defaultFragment(){
-//        if(mTablet) {
-//            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-//            Bundle args = new Bundle();
-//            args.putString(ConstantsUtils.DEFAULT_TEXT, getString(R.string.default_text));
-//            args.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
-//            movieDetailFragment.setArguments(args);
-//            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, movieDetailFragment).commit();
-//        }
-//    }
 }

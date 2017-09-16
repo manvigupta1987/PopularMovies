@@ -3,9 +3,13 @@ package com.example.manvi.movieappstage1.data.Source;
 import android.support.annotation.NonNull;
 
 import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Reviews;
+import com.example.manvi.movieappstage1.data.Trailer;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
+
 
 /**
  * Created by manvi on 11/9/17.
@@ -13,29 +17,15 @@ import java.util.List;
 
 public interface MovieDataSource {
 
-    interface LoadMoviesCallback {
+    Observable<List<MovieData>> getMovies(String sortBy, int page);
 
-        void onMoviesLoaded(ArrayList<MovieData> movieList);
-
-        void onDataNotAvailable();
-    }
-
-    interface GetMovieCallback {
-
-        void onTaskLoaded(MovieData movieData );
-
-        void onDataNotAvailable();
-    }
-
-    void getMovies(String sortBy, int page, @NonNull LoadMoviesCallback callback);
-
-    void getMovie(@NonNull String movieId, @NonNull GetMovieCallback callback);
+    Observable<MovieData> getMovie(String movieId);
 
     void insertMovie(@NonNull MovieData movieData);
 
-    void deleteAllMovies();
-
     void deleteMovie(@NonNull MovieData movieData);
 
-    void getReviewsTrailers(Long movieId, @NonNull GetMovieCallback callback);
+    Observable<List<Reviews>>getReviews(Long movieId);
+
+    Observable<List<Trailer>>getTrailer(Long movieId);
 }

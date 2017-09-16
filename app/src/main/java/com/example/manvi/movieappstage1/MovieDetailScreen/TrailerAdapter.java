@@ -23,7 +23,6 @@ import butterknife.ButterKnife;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerAdapterViewHolder> {
 
-    private final String TAG = TrailerAdapter.class.getSimpleName();
     private ArrayList<Trailer> mTrailerList;
 
     private Context mContext;
@@ -49,7 +48,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerA
     @Override
     public void onBindViewHolder(trailerAdapterViewHolder holder, int position)
     {
-        String poster = mTrailerList.get(position).getMthumbnailUrl();
+        String poster = mTrailerList.get(position).getThumbNailUrl();
         if(poster!=null) {
             //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
             Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)
@@ -82,7 +81,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerA
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-            String url = mTrailerList.get(adapterPosition).getmURL();
+            String url = mTrailerList.get(adapterPosition).getVideoUrl();
             mlistItemClickListener.onItemClicked(url);
         }
     }

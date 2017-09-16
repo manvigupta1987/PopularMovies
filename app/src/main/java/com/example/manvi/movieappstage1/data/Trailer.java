@@ -1,29 +1,43 @@
 package com.example.manvi.movieappstage1.data;
 
+import com.example.manvi.movieappstage1.Utils.NetworkUtils;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by manvi on 20/3/17.
  */
 
 public class Trailer {
+
+    public static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    @SerializedName("id")
+    @Expose
     private String mId;
-    private String mURL;
-    private String mthumbnailUrl;
+    @SerializedName("key")
+    @Expose
+    private String key;
+    @SerializedName("site")
+    @Expose
+    private String site;
 
-    public Trailer (String mId, String mURL, String mthumbnailUrl) {
-        this.mId = mId;
-        this.mURL = mURL;
-        this.mthumbnailUrl = mthumbnailUrl;
+    public String getKey() {
+        return key;
     }
 
-    public String getmId()
-    {
-        return this.mId;
-    }
-    public String getmURL(){
-        return mURL;
+    public String getSite() {
+        return site;
     }
 
-    public String getMthumbnailUrl() {
-        return mthumbnailUrl;
+    public String getVideoUrl() {
+        if (this.site.equals("YouTube")) {
+            return YOUTUBE_URL + getKey();
+        }
+        return null;
+    }
+
+    public String getThumbNailUrl(){
+        return NetworkUtils.buildYouTubeThumbNailURLForTrailers(this.key);
     }
 }
+

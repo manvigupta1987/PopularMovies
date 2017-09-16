@@ -24,6 +24,5 @@ public interface MovieScreenContract {
         void openMovieDetails(MovieData movieData);
         void setFiltering(String tabType);
         String getFiltering();
-
     }
 }

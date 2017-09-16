@@ -6,10 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.manvi.movieappstage1.*;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
+import com.example.manvi.movieappstage1.Utils.schedulers.SchedulerProvider;
 import com.example.manvi.movieappstage1.data.MovieData;
 import com.example.manvi.movieappstage1.data.Source.MovieRepository;
 import com.example.manvi.movieappstage1.data.Source.local.MoviesLocalDataSource;
-import com.example.manvi.movieappstage1.data.Source.remote.MoviesRemoteDataSource;
+import com.example.manvi.movieappstage1.data.Source.remote.MovieApi;
+import com.example.manvi.movieappstage1.data.Source.remote.MovieService;
+
 
 /**
  * Created by manvi on 13/9/17.
@@ -17,8 +20,8 @@ import com.example.manvi.movieappstage1.data.Source.remote.MoviesRemoteDataSourc
 
 public class MovieDetailScreenActivity extends AppCompatActivity {
 
-    private boolean mTablet;
     private MovieData movieData;
+    private MovieService movieService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +31,6 @@ public class MovieDetailScreenActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            if (bundle.containsKey(ConstantsUtils.TABLET_MODE)) {
-                mTablet = bundle.getBoolean(ConstantsUtils.TABLET_MODE);
-            }
             if (bundle.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
                 movieData = bundle.getParcelable(ConstantsUtils.MOVIE_DETAIL);
             }
@@ -47,13 +47,13 @@ public class MovieDetailScreenActivity extends AppCompatActivity {
             transaction.add(R.id.container, movieDetailFragment);
             transaction.commit();
         }
-
-        MovieRepository movieRepository = MovieRepository.getInstance(MoviesRemoteDataSource.getInstance(),
-                MoviesLocalDataSource.getInstance(getApplicationContext()));
+        movieService = MovieApi.getClient().create(MovieService.class);
+        MovieRepository movieRepository = MovieRepository.getInstance(MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()),movieService);
 
         // Create the presenter
         new MovieDetailPresenter(movieData,
                 movieRepository,
-                movieDetailFragment);
+                movieDetailFragment,
+                SchedulerProvider.getInstance());
     }
 }

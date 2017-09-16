@@ -42,10 +42,6 @@ public class MovieContract {
         public static final String COLUMN_POPULARITY = "popularity";
         public static final String COLUMN_VOTE_AVG = "average_vote";
         public static final String COLUMN_VOTE_COUNT = "vote_count";
-
-        public static Uri buildMovieDataUriWithMovieID(long movie_id) {
-            return CONTENT_URI.buildUpon().appendPath(Long.toString(movie_id)).build();
-        }
     }
 }
 

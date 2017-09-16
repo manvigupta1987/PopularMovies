@@ -105,9 +105,9 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
     private Snackbar snackbar;
+    private boolean mTablet;
     private Context mContext;
 
-    private boolean mTablet;
     public MovieDetailFragment() {
         // Required empty public constructor
     }
@@ -119,17 +119,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, rootView);
-
-//        Bundle args = getArguments();
-//        if(args!=null) {
-//            if (args.containsKey(ConstantsUtils.TABLET_MODE)) {
-//                mTablet = args.getBoolean(ConstantsUtils.TABLET_MODE);
-//            }
-//            if(args.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
-//                mMovie = args.getParcelable(ConstantsUtils.MOVIE_DETAIL);
-//                //mUri =   MovieContract.FavoriteMovieEntry.buildMovieDataUriWithMovieID(mMovie.getMovieID());
-//            }
-//        }
         return rootView;
     }
 
@@ -137,7 +126,13 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.start(0);
+        mPresenter.subscribe();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
     }
 
     @Override
@@ -148,8 +143,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
             mLinearLayout = (LinearLayout) getActivity().findViewById(R.id.movieDetail);
             mAppBarLayoyt = (AppBarLayout) getActivity().findViewById(R.id.appbar);
             mNoMovieDetail = (TextView) getActivity().findViewById(R.id.default_text_view);
-
-            //showDetailView();
         }
         mFloatingButton = (FloatingActionButton)getActivity().findViewById(R.id.favourite_fab);
         mFloatingButton.setOnCheckedChangeListener(this);
@@ -157,35 +150,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-//        Bundle args = getArguments();
-//        if (args!=null && args.containsKey(ConstantsUtils.DEFAULT_TEXT)) {
-//            if (mTablet) {
-//                showDefaultTextView();
-//            }
-//        }
-        //In case of tablet, dont show back button on the action bar for the detail activity.
-//        if (!mTablet) {
-//            final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-//            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
-
-        //Set the recyclerView with LinearLayout Manager for the trailer View.
-        //setupTrailerRecyclerView();
-        //Set the recyclerView with LinearLayout Manager for the trailer View.
-        //setupReviewLayout();
-
-        //sync review and trailers form the network.
-        //loadReviewsNTrailers();
-
-        //Check if selected movie is present in the favourites list, if yes, show the floating action button as selected,
-        //else unselected.
-        //isMovieFavourite();
-        //start the loader for fetching the movie details from the data base.
-        //getLoaderManager().initLoader(ConstantsUtils.MOVIE_DETAIL_LOADER_ID, null, this);
-        //showMovieDetails();
     }
 
 
@@ -221,7 +185,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mTrailerRecyclerView.getContext(),
                 linearLayoutManager1.getOrientation());
         mTrailerRecyclerView.addItemDecoration(dividerItemDecoration);
-        //showsTrailers(true);
     }
 
     @Override
@@ -256,13 +219,12 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         mReviewRecyclerView.setLayoutManager(linearLayoutManager);
         mReviewRecyclerView.setHasFixedSize(true);
 
-        mReviewAdapter = new ReviewAdapter(mContext);
+        mReviewAdapter = new ReviewAdapter();
         mReviewRecyclerView.setAdapter(mReviewAdapter);
 
         DividerItemDecoration dividerReviewItemDecoration = new DividerItemDecoration(mReviewRecyclerView.getContext(),
                 linearLayoutManager.getOrientation());
         mReviewRecyclerView.addItemDecoration(dividerReviewItemDecoration);
-        //showReviews(true);
     }
 
 

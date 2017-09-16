@@ -21,13 +21,9 @@ import butterknife.ButterKnife;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdapterViewHolder> {
 
-    private final String TAG = TrailerAdapter.class.getSimpleName();
     private ArrayList<Reviews> mReviewList;
 
-    private Context mContext;
-
-    public ReviewAdapter(Context context){
-        mContext = context;
+    public ReviewAdapter(){
     }
 
     @Override

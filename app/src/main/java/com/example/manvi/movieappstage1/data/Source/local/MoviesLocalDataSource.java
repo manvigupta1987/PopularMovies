@@ -4,14 +4,21 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
 import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Source.MovieDataSource;
+import com.example.manvi.movieappstage1.data.Trailer;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
+import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -25,20 +32,74 @@ public class MoviesLocalDataSource implements MovieDataSource {
     private static MoviesLocalDataSource INSTANCE;
 
     private MovieDbHelper mDbHelper;
-    private Context mContext;
-    private LoadMoviesCallback mMoviesCallBack;
-    private GetMovieCallback mMovieCallBack;
+    private SqlBrite sqlBrite;
 
-    // Prevent direct instantiation.
-    private MoviesLocalDataSource(@NonNull Context context) {
+    @NonNull
+    private final BriteDatabase mDatabaseHelper;
+
+    private MoviesLocalDataSource(@NonNull Context context,
+                                  @NonNull BaseSchedulerProvider schedulerProvider) {
         checkNotNull(context);
+        checkNotNull(schedulerProvider);
+
         mDbHelper = new MovieDbHelper(context);
-        mContext = context;
+        sqlBrite = SqlBrite.create();
+        mDatabaseHelper = sqlBrite.wrapDatabaseHelper(mDbHelper, schedulerProvider.io());
     }
 
-    public static MoviesLocalDataSource getInstance(@NonNull Context context) {
+
+    public static Func1<SqlBrite.Query, List<MovieData>> QUERY_TO_LIST_MAPPER =
+            new Func1<SqlBrite.Query, List<MovieData>>() {
+        @Override
+        public List<MovieData> call(SqlBrite.Query query) {
+            Cursor cursor = query.run();
+            try {
+                List<MovieData> movies = new ArrayList<MovieData>(cursor.getCount());
+                while (cursor.moveToNext()) {
+                    MovieData movie = createFromCursor(cursor);
+                    movies.add(movie);
+                }
+                return movies;
+            } finally {
+                cursor.close();
+            }
+        }
+    };
+
+    public static Func1<SqlBrite.Query, MovieData> QUERY_TO_ITEM_MAPPER = new Func1<SqlBrite.Query, MovieData>() {
+        @Override
+        public MovieData call(SqlBrite.Query query) {
+            Cursor cursor = query.run();
+            try {
+                cursor.moveToNext();
+                return createFromCursor(cursor);
+            } finally {
+                cursor.close();
+            }
+        }
+    };
+
+
+    @NonNull
+    private static MovieData createFromCursor(@NonNull Cursor cursor) {
+        MovieData movie = new MovieData(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
+                cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
+                cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
+                cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
+                cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH)),
+                cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW)),
+                cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE)),
+                cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG)),
+                cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY)),
+                cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT)));
+        return movie;
+    }
+
+
+    public static MoviesLocalDataSource getInstance(@NonNull Context context,
+                                                    @NonNull BaseSchedulerProvider schedulerProvider) {
         if (INSTANCE == null) {
-            INSTANCE = new MoviesLocalDataSource(context);
+            INSTANCE = new MoviesLocalDataSource(context, schedulerProvider);
         }
         return INSTANCE;
     }
@@ -46,175 +107,58 @@ public class MoviesLocalDataSource implements MovieDataSource {
 
 
     @Override
-    public void getMovies(String sortBy, int page, @NonNull LoadMoviesCallback callback) {
-        mMoviesCallBack = callback;
-        new LoadFavoriteMoviesTask().execute();
+    public Observable<List<MovieData>> getMovies(String sortBy, int page) {
+        Observable<List<MovieData>> selectedMovieObservable = mDatabaseHelper
+                .createQuery(MovieContract.FavoriteMovieEntry.TABLE_NAME, "SELECT * FROM " +MovieContract.FavoriteMovieEntry.TABLE_NAME)
+                .map(QUERY_TO_LIST_MAPPER);
+
+        return selectedMovieObservable;
     }
 
     @Override
-    public void getMovie(@NonNull String movieId, @NonNull GetMovieCallback callback) {
-        mMovieCallBack = callback;
-        new LoadFavoriteMovieTask().execute(movieId);
+    public Observable<MovieData> getMovie(@NonNull String movieId) {
+
+        Observable<MovieData> selectedMovieObservable = mDatabaseHelper
+                .createQuery(MovieContract.FavoriteMovieEntry.TABLE_NAME, "SELECT * FROM " +MovieContract.FavoriteMovieEntry.TABLE_NAME + " WHERE " + MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID  + " = ?", String.valueOf(movieId))
+                .map(QUERY_TO_ITEM_MAPPER);
+
+        return  selectedMovieObservable;
     }
 
     @Override
     public void insertMovie(@NonNull MovieData movieData) {
         checkNotNull(movieData);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movieData.getMovieID());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP, movieData.getFavBackDropPath(mContext));
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP, movieData.getFavBackDropPath());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_LANG, movieData.getOriginalLang());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movieData.getOverview());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY, movieData.getPopularity());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movieData.getFavPoster_path(mContext));
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movieData.getFavPoster_path());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movieData.getReleaseDate());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movieData.getTitle());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG, movieData.getVoteAvgCount());
         values.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT, movieData.getVoteCount());
 
-        db.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, null, values);
-        db.close();
-    }
-
-    @Override
-    public void deleteAllMovies() {
-
+        mDatabaseHelper.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, values,SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     @Override
     public void deleteMovie(@NonNull MovieData movieData) {
         Long movieId = movieData.getMovieID();
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         String selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
         String[] selectionArgs = { movieId.toString() };
-
-        db.delete(MovieContract.FavoriteMovieEntry.TABLE_NAME, selection, selectionArgs);
-
-        db.close();
+        mDatabaseHelper.delete(MovieContract.FavoriteMovieEntry.TABLE_NAME, selection, selectionArgs);
     }
 
     @Override
-    public void getReviewsTrailers(Long movieId, @NonNull GetMovieCallback callback) {
-
+    public Observable<List<Reviews>> getReviews(Long movieId) {
+        return null;
     }
 
-    private class LoadFavoriteMoviesTask extends AsyncTask<Void, Integer, ArrayList<MovieData>> {
-        @Override
-        protected ArrayList<MovieData> doInBackground(Void... params) {
-            // Retrieve movie records from fav movie table
-            //mDatasetList.clear();
-            ArrayList<MovieData> movieList = new ArrayList<MovieData>();
-            SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-            String[] projection = {
-                    MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID,
-                    MovieContract.FavoriteMovieEntry.COLUMN_TITLE,
-                    MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP,
-                    MovieContract.FavoriteMovieEntry.COLUMN_LANG,
-                    MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW,
-                    MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE,
-                    MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH,
-                    MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY,
-                    MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG,
-                    MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT};
-
-            Cursor cursor = db.query(MovieContract.FavoriteMovieEntry.TABLE_NAME,
-                    projection, null, null, null, null, null);
-
-            if (cursor != null && cursor.getCount() > 0) {
-                while (cursor.moveToNext()) {
-                    MovieData movie = new MovieData(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE)),
-                            cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG)),
-                            cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY)),
-                            cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT)));
-                    movieList.add(movie);
-                }
-            }
-            if (cursor != null) {
-                cursor.close();
-            }
-            db.close();
-            return movieList;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<MovieData> datalist) {
-            super.onPostExecute(datalist);
-            if (datalist.isEmpty()) {
-                // This will be called if the table is new or just empty.
-                mMoviesCallBack.onDataNotAvailable();
-            } else {
-                mMoviesCallBack.onMoviesLoaded(datalist);
-            }
-        }
-    }
-
-
-    private class LoadFavoriteMovieTask extends AsyncTask<String, Void, MovieData> {
-        @Override
-        protected MovieData doInBackground(String... params) {
-            SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-            String[] projection = {
-                    MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID,
-                    MovieContract.FavoriteMovieEntry.COLUMN_TITLE,
-                    MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP,
-                    MovieContract.FavoriteMovieEntry.COLUMN_LANG,
-                    MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW,
-                    MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE,
-                    MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH,
-                    MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY,
-                    MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG,
-                    MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT};
-
-            String selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
-            String[] selectionArgs = { params[0]};
-
-            Cursor cursor = db.query(
-                    MovieContract.FavoriteMovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
-
-            MovieData movieData = null;
-
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                movieData = new MovieData(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
-                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
-                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
-                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
-                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH)),
-                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW)),
-                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE)),
-                        cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG)),
-                        cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY)),
-                        cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT)));
-            }
-            if (cursor != null) {
-                cursor.close();
-            }
-
-            db.close();
-            return movieData;
-        }
-
-        @Override
-        protected void onPostExecute(MovieData movieData) {
-            super.onPostExecute(movieData);
-            if (movieData!=null) {
-                // This will be called if the table is new or just empty.
-                mMovieCallBack.onTaskLoaded(movieData);
-            } else {
-                mMovieCallBack.onDataNotAvailable();
-            }
-        }
+    @Override
+    public Observable<List<Trailer>> getTrailer(Long movieId) {
+        return null;
     }
 }
 

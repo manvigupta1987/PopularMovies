@@ -7,7 +7,7 @@ onSaveInstance will be called twice. So, make the fragment dynamically.-->
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     style="@style/matchParent"
-    tools:context="com.example.manvi.movieappstage1.MainActivity">
+    tools:context="com.example.manvi.movieappstage1.MoviesScreen.MovieScreenActivity">
 
     <!--<android.support.design.widget.TabLayout-->
         <!--android:id="@+id/tabs"-->

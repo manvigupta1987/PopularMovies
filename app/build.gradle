@@ -10,6 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        jackOptions {
+            enabled true
+        }
     }
     buildTypes {
         release {
@@ -22,6 +25,10 @@ android {
     }
     repositories {
         mavenCentral()
+    }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
     }
 }
 
@@ -41,6 +48,18 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.android.support:design:25.2.0' //Required for tab layout support
     compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+    //Retrofit & GSON
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+
+    //RxJava & RxAndorid
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile "io.reactivex:rxjava:1.1.8"
+    compile "com.squareup.sqlbrite:sqlbrite:0.7.0"
+
     //Color Palette
     compile 'com.android.support:palette-v7:25.2.0'
 

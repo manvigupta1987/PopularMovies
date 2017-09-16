@@ -3,9 +3,18 @@ package com.example.manvi.movieappstage1.MovieDetailScreen;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
 import com.example.manvi.movieappstage1.data.MovieData;
-import com.example.manvi.movieappstage1.data.Source.MovieDataSource;
+import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Source.MovieRepository;
+import com.example.manvi.movieappstage1.data.Trailer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,58 +27,67 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     private final MovieRepository mMoviesRepository;
     private final MovieDetailContract.View mMovieDetailView;
     private MovieData mMovieData;
-    private boolean mTablet;
     private String shareMovieTitle;
     private String shareMovieUrl;
 
+    @NonNull
+    private final BaseSchedulerProvider mSchedulerProvider;
+    @NonNull
+    private CompositeSubscription mSubscribtion;
+
     public MovieDetailPresenter(@Nullable MovieData movieData,
-                               @NonNull MovieRepository moviesRepository,
-                               @NonNull MovieDetailContract.View movieDetailView) {
+                                @NonNull MovieRepository moviesRepository,
+                                @NonNull MovieDetailContract.View movieDetailView,
+                                @NonNull BaseSchedulerProvider schedulerProvider) {
         mMovieData = movieData;
         mMoviesRepository = checkNotNull(moviesRepository, "moviesRepository cannot be null!");
         mMovieDetailView = checkNotNull(movieDetailView, "movieDetailView cannot be null!");
+        mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider can not be null");
 
+        mSubscribtion = new CompositeSubscription();
         mMovieDetailView.setPresenter(this);
     }
 
     @Override
-    public void start(int page) {
-        mMovieDetailView.setupReviewLayout();
-        mMovieDetailView.setupTrailerRecyclerView();
-        loadReviewsNTrailer();
-        checkForFavouriteMovie();
-        showMovieDetails();
+    public void loadReviews() {
 
+        //mSubscribtion.clear();
+        Subscription subscription1;
+        Observable<List<Reviews>> observable = mMoviesRepository.getReviews(mMovieData.getMovieID());
+        subscription1 = observable.observeOn(mSchedulerProvider.ui())
+                .subscribe(this::processReviews,
+                        throwable -> mMovieDetailView.showReviews(false));
+        mSubscribtion.add(subscription1);
+    }
+
+    public void processReviews(List<Reviews> reviews) {
+        if (reviews != null) {
+            mMovieDetailView.showReviews(true);
+            mMovieDetailView.showReviewsData((ArrayList<Reviews>) reviews);
+        } else {
+            mMovieDetailView.showReviews(false);
+        }
     }
 
     @Override
-    public void loadReviewsNTrailer() {
+    public void loadTrailers() {
+        mSubscribtion.clear();
+        Subscription subscription;
+        Observable<List<Trailer>> observable = mMoviesRepository.getTrailer(mMovieData.getMovieID());
+        subscription = observable.observeOn(mSchedulerProvider.ui())
+                .subscribe(this::processTrailer,
+                        throwable -> mMovieDetailView.showsTrailers(false));
+        mSubscribtion.add(subscription);
+    }
 
-        mMoviesRepository.getReviewsTrailers(mMovieData.getMovieID(), new MovieDataSource.GetMovieCallback(){
-            @Override
-            public void onTaskLoaded(MovieData movieData) {
-                if(movieData.getmReviewListList()!=null) {
-                    mMovieDetailView.showReviews(true);
-                    mMovieDetailView.showReviewsData(movieData.getmReviewListList());
-                } else {
-                    mMovieDetailView.showReviews(false);
-                }
-                if(movieData.getmTrailerList()!=null) {
-                    mMovieDetailView.showsTrailers(true);
-                    mMovieDetailView.showTrailersData(movieData.getmTrailerList());
-                    shareMovieUrl = movieData.getmTrailerList().get(0).getmURL();
-
-                }else {
-                    mMovieDetailView.showReviews(false);
-                }
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                mMovieDetailView.showReviews(false);
-                mMovieDetailView.showsTrailers(false);
-            }
-        });
+    public void processTrailer(List<Trailer> trailer) {
+        if (trailer != null) {
+            mMovieDetailView.showsTrailers(true);
+            mMovieDetailView.showTrailersData((ArrayList<Trailer>) trailer);
+            shareMovieUrl = trailer.get(0).getVideoUrl();
+        } else {
+            mMovieDetailView.showsTrailers(false);
+        }
     }
 
     @Override
@@ -85,18 +103,19 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override
     public void checkForFavouriteMovie() {
         Long movieId = mMovieData.getMovieID();
-        mMoviesRepository.getMovie(movieId.toString(), new MovieDataSource.GetMovieCallback() {
-            @Override
-            public void onTaskLoaded(MovieData movieData) {
-                mMovieDetailView.showMovieStatus(true);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                mMovieDetailView.showMovieStatus(false);
-            }
-        });
+        mSubscribtion.add(mMoviesRepository.getMovie(movieId.toString())
+                .subscribeOn(mSchedulerProvider.io())
+                .observeOn(mSchedulerProvider.ui())
+                .subscribe(
+                        //onNext
+                        this::showStatus,
+                        throwable -> mMovieDetailView.showMovieStatus(false)));
     }
+
+    private void showStatus(MovieData movieData) {
+        mMovieDetailView.showMovieStatus(true);
+    }
+
 
     @Override
     public void shareMovie() {
@@ -115,7 +134,22 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
         String backDropImagePath = mMovieData.getBackDropPath();
 
         shareMovieTitle = title;
-        mMovieDetailView.showMovieDetails(overView,title,
+        mMovieDetailView.showMovieDetails(overView, title,
                 date, voteAvg, voteCount, lang, poster_path, backDropImagePath);
+    }
+
+    @Override
+    public void subscribe() {
+        mMovieDetailView.setupReviewLayout();
+        mMovieDetailView.setupTrailerRecyclerView();
+        loadTrailers();
+        loadReviews();
+        checkForFavouriteMovie();
+        showMovieDetails();
+    }
+
+    @Override
+    public void unsubscribe() {
+        mSubscribtion.clear();
     }
 }

@@ -1,24 +1,21 @@
 package com.example.manvi.movieappstage1.data;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by manvi on 20/3/17.
  */
 
 public class Reviews {
-    private String mId;
+
+    @SerializedName("author")
+    @Expose
     private String mAuthor;
+    @SerializedName("content")
+    @Expose
     private String mContent;
 
-    public Reviews(String id, String Author, String Content )
-    {
-        this.mId = id;
-        this.mAuthor = Author;
-        this.mContent = Content;
-    }
-
-    public String getmId(){
-        return this.mId;
-    }
     public String getmAuthor(){
         return this.mAuthor;
     }

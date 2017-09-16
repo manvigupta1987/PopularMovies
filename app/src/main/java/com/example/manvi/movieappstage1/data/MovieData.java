@@ -1,13 +1,10 @@
 package com.example.manvi.movieappstage1.data;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.manvi.movieappstage1.R;
-
-import java.util.ArrayList;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by manvi on 1/3/17.
@@ -15,30 +12,45 @@ import java.util.ArrayList;
 
 public class MovieData implements Parcelable {
 
-    private final String TAG = MovieData.class.getSimpleName();
     private final String BASE_URL = "http://image.tmdb.org/t/p/";
     private final String BACKDROP_SIZE = "w342";
     private final String POSTER_SIZE = "w185";
 
+    @SerializedName("id")
+    @Expose
     private int mMovieId;
+    @SerializedName("backdrop_path")
+    @Expose
     private String mBackDropPath;
+    @SerializedName("original_language")
+    @Expose
     private String mOriginalLang;
+    @SerializedName("poster_path")
+    @Expose
     private String mPoster;
+    @SerializedName("overview")
+    @Expose
     private String mOverview;
+    @SerializedName("release_date")
+    @Expose
     private String mReleaseDate;
+    @SerializedName("original_title")
+    @Expose
     private String mTitle;
+    @SerializedName("vote_average")
+    @Expose
     private Double mVoteAverage;
+    @SerializedName("popularity")
+    @Expose
     private Double mPopularity;
+    @SerializedName("vote_count")
+    @Expose
     private int mVoteCount;
-    private ArrayList<Trailer> mTrailerList;
-    private ArrayList<Reviews> mReviewList;
 
-
-    public MovieData(int MovieId,String BackDropPath,String OriginalLang,
+    public MovieData(int MovieId, String BackDropPath, String OriginalLang,
                      String title, String poster_path, String overview,
-                     String release_date, Double vote_count,Double Popularity,
-                     int VoteCount)
-    {
+                     String release_date, Double vote_count, Double Popularity,
+                     int VoteCount) {
         this.mMovieId = MovieId;
         this.mBackDropPath = BackDropPath;
         this.mOriginalLang = OriginalLang;
@@ -49,11 +61,6 @@ public class MovieData implements Parcelable {
         this.mVoteAverage = vote_count;
         this.mPopularity = Popularity;
         this.mVoteCount = VoteCount;
-    }
-
-    public MovieData(ArrayList<Trailer> trailerList, ArrayList<Reviews> ReviewList ){
-        this.mTrailerList = trailerList;
-        this.mReviewList = ReviewList;
     }
 
     public MovieData(Parcel source) {
@@ -70,108 +77,73 @@ public class MovieData implements Parcelable {
         this.mVoteCount = source.readInt();
     }
 
-
-    public long getMovieID()
-    {
+    public long getMovieID() {
         return this.mMovieId;
     }
 
-    public String getOriginalLang()
-    {
+    public String getOriginalLang() {
         return this.mOriginalLang;
     }
 
-    public Double getPopularity()
-    {
+    public Double getPopularity() {
         return this.mPopularity;
     }
 
-    public int getVoteCount(){
+    public int getVoteCount() {
         return this.mVoteCount;
     }
 
-    public String getBackDropPath()
-    {
-        if(mBackDropPath!=null && !mBackDropPath.equals(""))
-        {
+    public String getBackDropPath() {
+        if (mBackDropPath != null && !mBackDropPath.equals("")) {
             String poster_path = BASE_URL + BACKDROP_SIZE + mBackDropPath;
             return (poster_path);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
 
     //returns the complete path of the image poster.
-    public String getPoster_path()
-    {
-        if(mPoster!=null && !mPoster.equals(""))
-        {
+    public String getPoster_path() {
+        if (mPoster != null && !mPoster.equals("")) {
             String poster_path = BASE_URL + POSTER_SIZE + mPoster;
             return (poster_path);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    public String getFavPoster_path(Context context)
-    {
-        Resources res= context.getResources();
-        if(mPoster!=null && !mPoster.equals(""))
-        {
+    public String getFavPoster_path() {
+        if (mPoster != null && !mPoster.equals("")) {
             return mPoster;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    public String getFavBackDropPath(Context context)
-    {
-        Resources res= context.getResources();
-        if(mBackDropPath!=null && !mBackDropPath.equals(""))
-        {
+    public String getFavBackDropPath() {
+        if (mBackDropPath != null && !mBackDropPath.equals("")) {
             return (mBackDropPath);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return this.mTitle;
     }
 
-    public String getOverview(){
+    public String getOverview() {
         return this.mOverview;
     }
 
-    public String getReleaseDate()
-    {
+    public String getReleaseDate() {
         return this.mReleaseDate;
     }
 
-    public Double getVoteAvgCount()
-    {
+    public Double getVoteAvgCount() {
         return this.mVoteAverage;
-    }
-
-    public ArrayList<Trailer> getmTrailerList()
-    {
-        return this.mTrailerList;
-    }
-
-    public ArrayList<Reviews> getmReviewListList()
-    {
-        return this.mReviewList;
     }
 
     public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {
