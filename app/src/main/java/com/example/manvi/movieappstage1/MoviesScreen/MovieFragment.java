@@ -21,11 +21,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.manvi.movieappstage1.MovieDetailScreen.MovieDetailScreenActivity;
+import com.example.manvi.movieappstage1.MovieDetailScreen.MovieDetailActivity;
 import com.example.manvi.movieappstage1.R;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 
 import java.util.ArrayList;
 
@@ -57,14 +57,14 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     @BindString(R.string.my_favorite_movies)
     String myFavoriteMovies;
 
-    @BindView(R.id.toolbar1)
+    @BindView(R.id.toolbar)
     Toolbar mtoolbar;
 
     private int mPage = 1;
     private MovieAdapter mMovieAdapter;
     private boolean mTablet;
     private String mFilterType;
-    private ArrayList<MovieData> mDatasetList;
+    private ArrayList<Movie> mDatasetList;
     public static final String SAVE_ALL_MOVIES_LIST = "ALL_MOVIES_LIST";
 
 
@@ -93,7 +93,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         }
 
         if (savedInstanceState == null) {
-            mDatasetList = new ArrayList<MovieData>();
+            mDatasetList = new ArrayList<Movie>();
         } else {
             mDatasetList = savedInstanceState.getParcelableArrayList(SAVE_ALL_MOVIES_LIST);
             if (savedInstanceState.containsKey(ConstantsUtils.SAVED_LAYOUT_MANAGER)) {
@@ -186,7 +186,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main_activity, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
         //Bind the data using Butterknife.
         ButterKnife.bind(this, rootView);
         setHasOptionsMenu(true);
@@ -212,12 +212,12 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.movie_filter, menu);
+        inflater.inflate(R.menu.sort_movie_activity, menu);
     }
 
     public void showFilteringPopUpMenu() {
         PopupMenu popup = new PopupMenu(getContext(), getActivity().findViewById(R.id.menu_filter));
-        popup.getMenuInflater().inflate(R.menu.filter_movies, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.sort_movie_type, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -264,13 +264,13 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
 
     @Override
-    public void showMovies(ArrayList<MovieData> movieList) {
+    public void showMovies(ArrayList<Movie> movieList) {
         if (mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)) {
             mDatasetList.clear();
         }
         if (movieList != null && movieList.size() != 0) {
-            for (MovieData movieData : movieList) {
-                mDatasetList.add(movieData);
+            for (Movie movie : movieList) {
+                mDatasetList.add(movie);
             }
         }
 
@@ -281,17 +281,17 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     }
 
     @Override
-    public void showMovieDetailsUI(MovieData movieData) {
+    public void showMovieDetailsUI(Movie movie) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movieData);
-        Intent intent = new Intent(getActivity(), MovieDetailScreenActivity.class);
+        bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movie);
+        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
         intent.putExtras(bundle);
         intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
         startActivity(intent);
     }
 
     @Override
-    public void onItemClicked(MovieData movie) {
+    public void onItemClicked(Movie movie) {
         mPresenter.openMovieDetails(movie);
     }
 
@@ -323,7 +323,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         //to store the scroll position of layout manager.
         outState.putParcelable(ConstantsUtils.SAVED_LAYOUT_MANAGER, mRecylerView.getLayoutManager().onSaveInstanceState());
         outState.putBoolean(ConstantsUtils.TABLET_MODE, mTablet);
-        ArrayList<MovieData> dataList = mMovieAdapter.getDataSetList();
+        ArrayList<Movie> dataList = mMovieAdapter.getDataSetList();
         if (dataList != null && !dataList.isEmpty()) {
             outState.putParcelableArrayList(SAVE_ALL_MOVIES_LIST, dataList);
         }

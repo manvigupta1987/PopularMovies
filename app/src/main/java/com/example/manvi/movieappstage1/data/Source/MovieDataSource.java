@@ -2,7 +2,7 @@ package com.example.manvi.movieappstage1.data.Source;
 
 import android.support.annotation.NonNull;
 
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Trailer;
 
@@ -17,13 +17,13 @@ import rx.Observable;
 
 public interface MovieDataSource {
 
-    Observable<List<MovieData>> getMovies(String sortBy, int page);
+    Observable<List<Movie>> getMovies(String sortBy, int page);
 
-    Observable<MovieData> getMovie(String movieId);
+    Observable<Movie> getMovie(String movieId);
 
-    void insertMovie(@NonNull MovieData movieData);
+    void insertMovie(@NonNull Movie movie);
 
-    void deleteMovie(@NonNull MovieData movieData);
+    void deleteMovie(@NonNull Movie movie);
 
     Observable<List<Reviews>>getReviews(Long movieId);
 

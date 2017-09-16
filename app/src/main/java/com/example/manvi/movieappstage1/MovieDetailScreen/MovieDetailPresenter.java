@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Source.MovieRepository;
 import com.example.manvi.movieappstage1.data.Trailer;
@@ -26,7 +26,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
     private final MovieRepository mMoviesRepository;
     private final MovieDetailContract.View mMovieDetailView;
-    private MovieData mMovieData;
+    private Movie mMovie;
     private String shareMovieTitle;
     private String shareMovieUrl;
 
@@ -35,11 +35,11 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @NonNull
     private CompositeSubscription mSubscribtion;
 
-    public MovieDetailPresenter(@Nullable MovieData movieData,
+    public MovieDetailPresenter(@Nullable Movie movie,
                                 @NonNull MovieRepository moviesRepository,
                                 @NonNull MovieDetailContract.View movieDetailView,
                                 @NonNull BaseSchedulerProvider schedulerProvider) {
-        mMovieData = movieData;
+        mMovie = movie;
         mMoviesRepository = checkNotNull(moviesRepository, "moviesRepository cannot be null!");
         mMovieDetailView = checkNotNull(movieDetailView, "movieDetailView cannot be null!");
         mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider can not be null");
@@ -53,7 +53,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
         //mSubscribtion.clear();
         Subscription subscription1;
-        Observable<List<Reviews>> observable = mMoviesRepository.getReviews(mMovieData.getMovieID());
+        Observable<List<Reviews>> observable = mMoviesRepository.getReviews(mMovie.getMovieID());
         subscription1 = observable.observeOn(mSchedulerProvider.ui())
                 .subscribe(this::processReviews,
                         throwable -> mMovieDetailView.showReviews(false));
@@ -73,7 +73,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     public void loadTrailers() {
         mSubscribtion.clear();
         Subscription subscription;
-        Observable<List<Trailer>> observable = mMoviesRepository.getTrailer(mMovieData.getMovieID());
+        Observable<List<Trailer>> observable = mMoviesRepository.getTrailer(mMovie.getMovieID());
         subscription = observable.observeOn(mSchedulerProvider.ui())
                 .subscribe(this::processTrailer,
                         throwable -> mMovieDetailView.showsTrailers(false));
@@ -92,17 +92,17 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
     @Override
     public void addMovieToFavourite() {
-        mMoviesRepository.insertMovie(mMovieData);
+        mMoviesRepository.insertMovie(mMovie);
     }
 
     @Override
     public void removeMovieFromFavourite() {
-        mMoviesRepository.deleteMovie(mMovieData);
+        mMoviesRepository.deleteMovie(mMovie);
     }
 
     @Override
     public void checkForFavouriteMovie() {
-        Long movieId = mMovieData.getMovieID();
+        Long movieId = mMovie.getMovieID();
         mSubscribtion.add(mMoviesRepository.getMovie(movieId.toString())
                 .subscribeOn(mSchedulerProvider.io())
                 .observeOn(mSchedulerProvider.ui())
@@ -112,7 +112,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
                         throwable -> mMovieDetailView.showMovieStatus(false)));
     }
 
-    private void showStatus(MovieData movieData) {
+    private void showStatus(Movie movie) {
         mMovieDetailView.showMovieStatus(true);
     }
 
@@ -124,14 +124,14 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
     @Override
     public void showMovieDetails() {
-        String title = mMovieData.getTitle();
-        String overView = mMovieData.getOverview();
-        String date = mMovieData.getReleaseDate();
-        Double voteAvg = mMovieData.getVoteAvgCount();
-        Integer voteCount = mMovieData.getVoteCount();
-        String lang = mMovieData.getOriginalLang();
-        String poster_path = mMovieData.getPoster_path();
-        String backDropImagePath = mMovieData.getBackDropPath();
+        String title = mMovie.getTitle();
+        String overView = mMovie.getOverview();
+        String date = mMovie.getReleaseDate();
+        Double voteAvg = mMovie.getVoteAvgCount();
+        Integer voteCount = mMovie.getVoteCount();
+        String lang = mMovie.getOriginalLang();
+        String poster_path = mMovie.getPoster_path();
+        String backDropImagePath = mMovie.getBackDropPath();
 
         shareMovieTitle = title;
         mMovieDetailView.showMovieDetails(overView, title,

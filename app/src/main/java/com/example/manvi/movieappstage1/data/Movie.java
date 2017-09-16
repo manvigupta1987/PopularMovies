@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by manvi on 1/3/17.
  */
 
-public class MovieData implements Parcelable {
+public class Movie implements Parcelable {
 
     private final String BASE_URL = "http://image.tmdb.org/t/p/";
     private final String BACKDROP_SIZE = "w342";
@@ -47,10 +47,10 @@ public class MovieData implements Parcelable {
     @Expose
     private int mVoteCount;
 
-    public MovieData(int MovieId, String BackDropPath, String OriginalLang,
-                     String title, String poster_path, String overview,
-                     String release_date, Double vote_count, Double Popularity,
-                     int VoteCount) {
+    public Movie(int MovieId, String BackDropPath, String OriginalLang,
+                 String title, String poster_path, String overview,
+                 String release_date, Double vote_count, Double Popularity,
+                 int VoteCount) {
         this.mMovieId = MovieId;
         this.mBackDropPath = BackDropPath;
         this.mOriginalLang = OriginalLang;
@@ -63,7 +63,7 @@ public class MovieData implements Parcelable {
         this.mVoteCount = VoteCount;
     }
 
-    public MovieData(Parcel source) {
+    public Movie(Parcel source) {
 
         this.mMovieId = source.readInt();
         this.mBackDropPath = source.readString();
@@ -146,14 +146,14 @@ public class MovieData implements Parcelable {
         return this.mVoteAverage;
     }
 
-    public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {
-        public MovieData createFromParcel(Parcel source) {
-            MovieData movie = new MovieData(source);
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel source) {
+            Movie movie = new Movie(source);
             return movie;
         }
 
-        public MovieData[] newArray(int size) {
-            return new MovieData[size];
+        public Movie[] newArray(int size) {
+            return new Movie[size];
         }
     };
 
@@ -178,7 +178,7 @@ public class MovieData implements Parcelable {
 
     @Override
     public String toString() {
-        return "MovieData{" +
+        return "Movie{" +
                 "mMovieId=" + mMovieId +
                 ", mBackDropPath='" + mBackDropPath + '\'' +
                 ", mOriginalLang='" + mOriginalLang + '\'' +

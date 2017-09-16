@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.example.manvi.movieappstage1.BuildConfig;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.MovieResponse;
 import com.example.manvi.movieappstage1.data.ReviewResponse;
 import com.example.manvi.movieappstage1.data.Reviews;
@@ -65,16 +65,16 @@ public class MovieRepository implements MovieDataSource {
 
 
     @Override
-    public Observable<List<MovieData>> getMovies(String sortBy, int page) {
+    public Observable<List<Movie>> getMovies(String sortBy, int page) {
         checkNotNull(sortBy);
 
         if(sortBy.equals(ConstantsUtils.POPULAR_MOVIE) || sortBy.equals(ConstantsUtils.TOP_RATED_MOVIE))
         {
             Observable<MovieResponse> movieResponse = mMovieService.getMovies(sortBy, BuildConfig.API_KEY,page);
             return movieResponse.subscribeOn(Schedulers.io())
-                    .map(new Func1<MovieResponse, List<MovieData>>() {
+                    .map(new Func1<MovieResponse, List<Movie>>() {
                         @Override
-                        public List<MovieData> call(MovieResponse moviesResponse) {
+                        public List<Movie> call(MovieResponse moviesResponse) {
                             return moviesResponse.getResults();
                         }
                     });
@@ -84,22 +84,22 @@ public class MovieRepository implements MovieDataSource {
     }
 
     @Override
-    public Observable<MovieData> getMovie(@NonNull String movieId) {
+    public Observable<Movie> getMovie(@NonNull String movieId) {
         checkNotNull(movieId);
-        Observable<MovieData> movieData = mMoviesLocalDataSource.getMovie(movieId);
+        Observable<Movie> movieData = mMoviesLocalDataSource.getMovie(movieId);
         return movieData;
     }
 
     @Override
-    public void insertMovie(@NonNull MovieData movieData) {
-        checkNotNull(movieData);
-        mMoviesLocalDataSource.insertMovie(movieData);
+    public void insertMovie(@NonNull Movie movie) {
+        checkNotNull(movie);
+        mMoviesLocalDataSource.insertMovie(movie);
     }
 
     @Override
-    public void deleteMovie(@NonNull MovieData movieData) {
-        checkNotNull(movieData);
-        mMoviesLocalDataSource.deleteMovie(movieData);
+    public void deleteMovie(@NonNull Movie movie) {
+        checkNotNull(movie);
+        mMoviesLocalDataSource.deleteMovie(movie);
     }
 
     @Override

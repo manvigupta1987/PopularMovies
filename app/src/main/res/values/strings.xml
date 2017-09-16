@@ -40,4 +40,6 @@
     <string name="most_popular_movies">Most Popular</string>
     <string name="top_rated_movies">Top Rated</string>
     <string name="my_favorite_movies">My Favorite Movies</string>
+
+    <string name="sendto">SHARE WITH FRIENDS</string>
 </resources>

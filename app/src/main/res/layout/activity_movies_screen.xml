@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Dont make it as fragment as it will load the fragment two times ad functions onCreate, onCreateview, onAcitivityCreated,
+onSaveInstance will be called twice. So, make the fragment dynamically.-->
+<FrameLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/contentFrame"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:layout="@layout/fragment_movies"
+tools:context="com.example.manvi.movieappstage1.MoviesScreen.MovieScreenActivity" />

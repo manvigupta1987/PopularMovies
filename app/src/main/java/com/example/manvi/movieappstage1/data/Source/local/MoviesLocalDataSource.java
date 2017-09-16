@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Source.MovieDataSource;
 import com.example.manvi.movieappstage1.data.Trailer;
@@ -48,15 +48,15 @@ public class MoviesLocalDataSource implements MovieDataSource {
     }
 
 
-    public static Func1<SqlBrite.Query, List<MovieData>> QUERY_TO_LIST_MAPPER =
-            new Func1<SqlBrite.Query, List<MovieData>>() {
+    public static Func1<SqlBrite.Query, List<Movie>> QUERY_TO_LIST_MAPPER =
+            new Func1<SqlBrite.Query, List<Movie>>() {
         @Override
-        public List<MovieData> call(SqlBrite.Query query) {
+        public List<Movie> call(SqlBrite.Query query) {
             Cursor cursor = query.run();
             try {
-                List<MovieData> movies = new ArrayList<MovieData>(cursor.getCount());
+                List<Movie> movies = new ArrayList<Movie>(cursor.getCount());
                 while (cursor.moveToNext()) {
-                    MovieData movie = createFromCursor(cursor);
+                    Movie movie = createFromCursor(cursor);
                     movies.add(movie);
                 }
                 return movies;
@@ -66,9 +66,9 @@ public class MoviesLocalDataSource implements MovieDataSource {
         }
     };
 
-    public static Func1<SqlBrite.Query, MovieData> QUERY_TO_ITEM_MAPPER = new Func1<SqlBrite.Query, MovieData>() {
+    public static Func1<SqlBrite.Query, Movie> QUERY_TO_ITEM_MAPPER = new Func1<SqlBrite.Query, Movie>() {
         @Override
-        public MovieData call(SqlBrite.Query query) {
+        public Movie call(SqlBrite.Query query) {
             Cursor cursor = query.run();
             try {
                 cursor.moveToNext();
@@ -79,10 +79,9 @@ public class MoviesLocalDataSource implements MovieDataSource {
         }
     };
 
-
     @NonNull
-    private static MovieData createFromCursor(@NonNull Cursor cursor) {
-        MovieData movie = new MovieData(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
+    private static Movie createFromCursor(@NonNull Cursor cursor) {
+        Movie movie = new Movie(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
                 cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
                 cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
                 cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
@@ -107,8 +106,8 @@ public class MoviesLocalDataSource implements MovieDataSource {
 
 
     @Override
-    public Observable<List<MovieData>> getMovies(String sortBy, int page) {
-        Observable<List<MovieData>> selectedMovieObservable = mDatabaseHelper
+    public Observable<List<Movie>> getMovies(String sortBy, int page) {
+        Observable<List<Movie>> selectedMovieObservable = mDatabaseHelper
                 .createQuery(MovieContract.FavoriteMovieEntry.TABLE_NAME, "SELECT * FROM " +MovieContract.FavoriteMovieEntry.TABLE_NAME)
                 .map(QUERY_TO_LIST_MAPPER);
 
@@ -116,9 +115,9 @@ public class MoviesLocalDataSource implements MovieDataSource {
     }
 
     @Override
-    public Observable<MovieData> getMovie(@NonNull String movieId) {
+    public Observable<Movie> getMovie(@NonNull String movieId) {
 
-        Observable<MovieData> selectedMovieObservable = mDatabaseHelper
+        Observable<Movie> selectedMovieObservable = mDatabaseHelper
                 .createQuery(MovieContract.FavoriteMovieEntry.TABLE_NAME, "SELECT * FROM " +MovieContract.FavoriteMovieEntry.TABLE_NAME + " WHERE " + MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID  + " = ?", String.valueOf(movieId))
                 .map(QUERY_TO_ITEM_MAPPER);
 
@@ -126,26 +125,26 @@ public class MoviesLocalDataSource implements MovieDataSource {
     }
 
     @Override
-    public void insertMovie(@NonNull MovieData movieData) {
-        checkNotNull(movieData);
+    public void insertMovie(@NonNull Movie movie) {
+        checkNotNull(movie);
         ContentValues values = new ContentValues();
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movieData.getMovieID());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP, movieData.getFavBackDropPath());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_LANG, movieData.getOriginalLang());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movieData.getOverview());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY, movieData.getPopularity());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movieData.getFavPoster_path());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movieData.getReleaseDate());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movieData.getTitle());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG, movieData.getVoteAvgCount());
-        values.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT, movieData.getVoteCount());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movie.getMovieID());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP, movie.getFavBackDropPath());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_LANG, movie.getOriginalLang());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY, movie.getPopularity());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movie.getFavPoster_path());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movie.getTitle());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG, movie.getVoteAvgCount());
+        values.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
 
         mDatabaseHelper.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, values,SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     @Override
-    public void deleteMovie(@NonNull MovieData movieData) {
-        Long movieId = movieData.getMovieID();
+    public void deleteMovie(@NonNull Movie movie) {
+        Long movieId = movie.getMovieID();
         String selection = MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " =? ";
         String[] selectionArgs = { movieId.toString() };
         mDatabaseHelper.delete(MovieContract.FavoriteMovieEntry.TABLE_NAME, selection, selectionArgs);

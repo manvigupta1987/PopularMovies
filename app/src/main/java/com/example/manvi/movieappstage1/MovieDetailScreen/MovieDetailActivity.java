@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.manvi.movieappstage1.*;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.schedulers.SchedulerProvider;
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.Source.MovieRepository;
 import com.example.manvi.movieappstage1.data.Source.local.MoviesLocalDataSource;
 import com.example.manvi.movieappstage1.data.Source.remote.MovieApi;
@@ -18,21 +18,21 @@ import com.example.manvi.movieappstage1.data.Source.remote.MovieService;
  * Created by manvi on 13/9/17.
  */
 
-public class MovieDetailScreenActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity {
 
-    private MovieData movieData;
+    private Movie movie;
     private MovieService movieService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        setContentView(R.layout.activity_movie_detail);
 
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey(ConstantsUtils.MOVIE_DETAIL)) {
-                movieData = bundle.getParcelable(ConstantsUtils.MOVIE_DETAIL);
+                movie = bundle.getParcelable(ConstantsUtils.MOVIE_DETAIL);
             }
         }
 
@@ -51,7 +51,7 @@ public class MovieDetailScreenActivity extends AppCompatActivity {
         MovieRepository movieRepository = MovieRepository.getInstance(MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()),movieService);
 
         // Create the presenter
-        new MovieDetailPresenter(movieData,
+        new MovieDetailPresenter(movie,
                 movieRepository,
                 movieDetailFragment,
                 SchedulerProvider.getInstance());

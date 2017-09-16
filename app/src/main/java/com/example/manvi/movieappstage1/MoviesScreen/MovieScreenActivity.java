@@ -18,7 +18,7 @@ import com.example.manvi.movieappstage1.data.Source.remote.MovieService;
 
 public class MovieScreenActivity extends AppCompatActivity {
 
-    private MoviesPresenter mMoviesPresenter;
+    private MoviePresenter mMoviePresenter;
     private MovieService movieService;
     public static final String FILTER_TYPE = "filter_type";
 
@@ -28,7 +28,7 @@ public class MovieScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_movies_screen);
 
         MovieFragment tasksFragment =
                 (MovieFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
@@ -43,17 +43,17 @@ public class MovieScreenActivity extends AppCompatActivity {
         MovieRepository movieRepository = MovieRepository.getInstance(
                 MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()),movieService);
 
-        mMoviesPresenter = new MoviesPresenter(movieRepository, tasksFragment, SchedulerProvider.getInstance());
+        mMoviePresenter = new MoviePresenter(movieRepository, tasksFragment, SchedulerProvider.getInstance());
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
             String currentFiltering = savedInstanceState.getString(FILTER_TYPE);
-            mMoviesPresenter.setFiltering(currentFiltering);
+            mMoviePresenter.setFiltering(currentFiltering);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(FILTER_TYPE, mMoviesPresenter.getFiltering());
+        outState.putString(FILTER_TYPE, mMoviePresenter.getFiltering());
         super.onSaveInstanceState(outState);
     }
 

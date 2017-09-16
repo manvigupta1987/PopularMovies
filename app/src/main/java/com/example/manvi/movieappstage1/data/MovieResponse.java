@@ -13,9 +13,9 @@ public class MovieResponse {
 
     @SerializedName("results")
     @Expose
-    private ArrayList<MovieData> results;
+    private ArrayList<Movie> results;
 
-    public ArrayList<MovieData> getResults() {
+    public ArrayList<Movie> getResults() {
         return this.results;
     }
 }

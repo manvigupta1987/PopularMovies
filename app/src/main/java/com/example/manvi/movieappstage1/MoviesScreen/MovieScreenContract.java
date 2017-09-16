@@ -2,7 +2,7 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 
 import com.example.manvi.movieappstage1.BasePresenter;
 import com.example.manvi.movieappstage1.BaseView;
-import com.example.manvi.movieappstage1.data.MovieData;
+import com.example.manvi.movieappstage1.data.Movie;
 
 import java.util.ArrayList;
 
@@ -14,14 +14,14 @@ public interface MovieScreenContract {
 
     interface View extends BaseView<Presenter>{
         void setLoadingIndicator(boolean active);
-        void showMovies(ArrayList<MovieData> movieList);
-        void showMovieDetailsUI(MovieData movieData);
+        void showMovies(ArrayList<Movie> movieList);
+        void showMovieDetailsUI(Movie movie);
         void showNoFavMovieError();
     }
 
     interface Presenter extends BasePresenter{
         void loadMovies(int page);
-        void openMovieDetails(MovieData movieData);
+        void openMovieDetails(Movie movie);
         void setFiltering(String tabType);
         String getFiltering();
     }

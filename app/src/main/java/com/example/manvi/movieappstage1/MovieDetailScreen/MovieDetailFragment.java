@@ -33,6 +33,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.manvi.movieappstage1.Utils.FloatingActionButton;
 import com.example.manvi.movieappstage1.R;
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
@@ -265,23 +269,55 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         mMovieLanguage.setText(lang);
         mMovieLanguage.setContentDescription(lang);
 
-        Picasso.with(getActivity()).load(poster_path).placeholder(R.drawable.backdrop_loading_placeholder)
-                .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(mImageView);
+        Glide.with(getContext()).
+                load(poster_path).
+                asBitmap().
+                diskCacheStrategy(DiskCacheStrategy.RESULT).
+                placeholder(R.drawable.backdrop_loading_placeholder).
+                error(R.drawable.no_image).
+                into(mImageView);
 
-        Picasso.with(getActivity()).load(backDropImagePath).placeholder(loading_backdrop)
-                .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage, new Callback() {
-            @Override
-            public void onSuccess() {
-                if(!mTablet){
-                    createPalette();
-                }
-            }
+//        Picasso.with(getActivity()).load(poster_path).placeholder(R.drawable.backdrop_loading_placeholder)
+//                .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(mImageView);
 
-            @Override
-            public void onError() {
+        Glide.with(getActivity()).load(backDropImagePath)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .placeholder(loading_backdrop)
+                .error(error_image)
+                .into(new BitmapImageViewTarget(mBackDropImage)
+                {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation anim)
+                    {
+                        super.onResourceReady(bitmap, anim);
 
-            }
-        });
+                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                            @Override
+                            public void onGenerated(Palette palette) {
+                                int primaryDark = ContextCompat.getColor(getContext(),R.color.colorPrimaryDark);
+                                int primary = ContextCompat.getColor(getContext(),R.color.colorPrimary);
+                                mCollapsingToolbar.setContentScrimColor(palette.getMutedColor(primary));
+                                mCollapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
+                                setStatusBarColor(palette.getDarkMutedColor(primaryDark));
+                            }
+                        });
+                    }
+                });
+//        Picasso.with(getActivity()).load(backDropImagePath).placeholder(loading_backdrop)
+//                .error(error_image).config(Bitmap.Config.RGB_565).into(mBackDropImage, new Callback() {
+//            @Override
+//            public void onSuccess() {
+//                if(!mTablet){
+//                    createPalette();
+//                }
+//            }
+//
+//            @Override
+//            public void onError() {
+//
+//            }
+//        });
 
 
     }
@@ -327,7 +363,7 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.menu_detail,menu);
+        getActivity().getMenuInflater().inflate(R.menu.share_movie_detail,menu);
     }
 
 
@@ -355,7 +391,7 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                 .setText(sharedText)
                 .getIntent();
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        startActivity(shareIntent);
+        startActivity(Intent.createChooser(shareIntent,getResources().getText(R.string.sendto)));
     }
 
     @Override

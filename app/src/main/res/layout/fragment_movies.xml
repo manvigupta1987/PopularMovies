@@ -1,0 +1,43 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MoviesScreen.MovieScreenActivity">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/AppTheme.Toolbar" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        style="@style/matchParent"
+        android:layout_marginTop="32dp"
+        android:clickable="true"
+        android:scrollbars="vertical"/>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_bar"
+        android:layout_width="@dimen/progress_bar_dimen"
+        android:layout_height="@dimen/progress_bar_dimen"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/error_text_view"
+        style="@style/matchParent"
+        android:gravity="center"
+        android:padding="@dimen/padding_dimen"
+        android:text="@string/no_fav"
+        android:textSize="@dimen/text_size"
+        android:visibility="gone"
+        android:textColor="@android:color/white"/>
+</android.support.design.widget.CoordinatorLayout>

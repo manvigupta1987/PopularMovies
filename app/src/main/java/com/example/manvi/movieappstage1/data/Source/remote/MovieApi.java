@@ -13,19 +13,19 @@ public class MovieApi {
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
 
 
-    private static Retrofit retrofit = null;
+    private static Retrofit sRetrofit = null;
 
     public static Retrofit getClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
+        if (sRetrofit == null) {
+            sRetrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .baseUrl(BASE_URL)
                     .client(builder.build())
                     .build();
         }
-        return retrofit;
+        return sRetrofit;
     }
 }
