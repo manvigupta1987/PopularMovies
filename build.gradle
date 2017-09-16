@@ -15,7 +15,15 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
+}
+ext {
+    // The following are only a few examples of the types of properties you can define.
+    compileSdkVersion = 26
+    buildToolsVersion = "26.0.1"
 }
 
 task clean(type: Delete) {

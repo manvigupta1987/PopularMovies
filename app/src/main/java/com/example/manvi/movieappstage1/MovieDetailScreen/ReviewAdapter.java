@@ -38,8 +38,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
     {
         String content = mReviewList.get(position).getmContent();
         holder.mReviewText.setText(content);
+        holder.mReviewText.setContentDescription(content);
         String author = mReviewList.get(position).getmAuthor();
         holder.mReviewAuthor.setText(author);
+        holder.mReviewAuthor.setContentDescription(author);
     }
 
 

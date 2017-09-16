@@ -43,4 +43,6 @@
 
     <string name="sendto">SHARE WITH FRIENDS</string>
     <string name="transition_string">MyImage</string>
+    <string name="movie_trailer">movie trailer</string>
+    <string name="backdrop_image">movie image</string>
 </resources>

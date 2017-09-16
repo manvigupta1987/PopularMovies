@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.manvi.movieappstage1.data.Trailer;
 import com.example.manvi.movieappstage1.R;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
 
@@ -51,9 +53,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerA
         String poster = mTrailerList.get(position).getThumbNailUrl();
         if(poster!=null) {
             //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
-            Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)
-                    .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(holder.mtrailerImage);
+            Glide.with(mContext).load(poster)
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .error(R.drawable.no_image)
+                    .placeholder(R.drawable.backdrop_loading_placeholder)
+                    .into(holder.mtrailerImage);
         }
+
 
     }
 

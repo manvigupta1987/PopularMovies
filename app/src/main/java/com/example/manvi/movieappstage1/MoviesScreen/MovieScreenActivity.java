@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.transition.Slide;
+import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.Window;
 
@@ -36,13 +37,10 @@ public class MovieScreenActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_screen);
-
         MovieFragment tasksFragment =
                 (MovieFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
             // Create the fragment
-
-
 
             tasksFragment = MovieFragment.newInstance(0, isTablet());
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -61,6 +59,7 @@ public class MovieScreenActivity extends AppCompatActivity {
             mMoviePresenter.setFiltering(currentFiltering);
         }
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

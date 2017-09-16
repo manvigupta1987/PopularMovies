@@ -24,8 +24,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.R;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -66,7 +64,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         if (mDatasetList != null) {
             Movie movie = mDatasetList.get(position);
             holder.mTVTitle.setText(movie.getTitle());
+            holder.mTVTitle.setContentDescription(movie.getTitle());
             holder.mTVRating.setText(String.valueOf(movie.getVoteAvgCount()));
+            holder.mTVRating.setContentDescription(holder.mTVRating.getText());
             String poster = movie.getPoster_path();
             if (poster != null) {
                 //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
@@ -92,7 +92,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             }
                         });
             }
-            ViewCompat.setTransitionName(holder.mMovieImage, mContext.getString(R.string.transition_string) + position);
+
+            holder.mMovieImage.setContentDescription(movie.getTitle());
         }
     }
 

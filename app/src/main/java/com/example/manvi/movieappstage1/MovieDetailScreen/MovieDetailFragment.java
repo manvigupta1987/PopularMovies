@@ -44,13 +44,12 @@ import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Trailer;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -246,13 +245,14 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                                  String backDropImagePath) {
 
         mOverview.setText(overView);
+        mOverview.setContentDescription(overView);
         mCollapsingToolbar.setTitle(title);
         mCollapsingToolbar.setContentDescription(title);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
             Date date = simpleDateFormat.parse(releaseDate);
-            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("dd MMM yyyy");
+            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
             String date2 = simpleDateFormat1.format(date);
             mReleaseDate.setText(date2);
             mReleaseDate.setContentDescription(date2);
@@ -279,9 +279,7 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                 placeholder(R.drawable.backdrop_loading_placeholder).
                 error(R.drawable.no_image).
                 into(mImageView);
-
-//        Picasso.with(getActivity()).load(poster_path).placeholder(R.drawable.backdrop_loading_placeholder)
-//                .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(mImageView);
+        mImageView.setContentDescription(title);
 
         Glide.with(getActivity()).load(backDropImagePath)
                 .asBitmap()
@@ -307,24 +305,9 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                         });
                     }
                 });
+        mBackDropImage.setContentDescription(title);
 
     }
-
-    //Sets Collapsing toolbar Color ContentScrim and StatusBar Scrim color based on the backdrop color swatches.
-    private void createPalette(){
-        Bitmap bitmap = ((BitmapDrawable) mBackDropImage.getDrawable()).getBitmap();
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                int primaryDark = ContextCompat.getColor(getContext(),R.color.colorPrimaryDark);
-                int primary = ContextCompat.getColor(getContext(),R.color.colorPrimary);
-                mCollapsingToolbar.setContentScrimColor(palette.getMutedColor(primary));
-                mCollapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
-                setStatusBarColor(palette.getDarkMutedColor(primaryDark));
-            }
-        });
-    }
-
 
     //Setting the color of status bar as per the backDrop image.
     private void setStatusBarColor(int darkMutedColor) {
@@ -378,7 +361,9 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                 .setType("text/plain")
                 .setText(sharedText)
                 .getIntent();
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        }
         startActivity(Intent.createChooser(shareIntent,getResources().getText(R.string.sendto)));
     }
 

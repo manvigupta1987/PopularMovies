@@ -8,5 +8,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="1dp"
         android:adjustViewBounds="true"
-        android:id="@+id/trailer_image" />
+        android:id="@+id/trailer_image"
+        android:contentDescription="@string/movie_trailer"/>
 </RelativeLayout>
