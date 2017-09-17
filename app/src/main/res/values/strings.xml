@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Movie Studio</string>
     <string name="no_internet_message">Please check your internet connection and try again later </string>
-    <string name="error_message">Failed to connect, Please try after sometime</string>
+    <string name="no_connectivity">No internet connection</string>
     <string name="no_Reviews">No Reviews</string>
     <string name="no_Trailers">No Trailers</string>
     <string name="no_fav">No Movie Added to Favourites.</string>

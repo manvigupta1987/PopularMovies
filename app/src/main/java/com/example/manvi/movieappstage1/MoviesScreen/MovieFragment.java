@@ -69,6 +69,9 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     @BindString(R.string.no_internet_message)
     String mNoInternetCon;
 
+    @BindString(R.string.no_connectivity)
+    String mNoInternetSnackMessage;
+
     @BindView(R.id.toolbar)
     Toolbar mtoolbar;
 
@@ -150,7 +153,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
                         int pastVisibleItem =
                                 ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                         if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
-                            if (NetworkUtils.isNetworkConnectionAvailable(getActivity())) {
+                            if (isOnline()) {
                                 mNoNetworkRetryLayout.setVisibility(View.GONE);
                                 mPage++;
                                 mPresenter.loadMovies(mPage);
@@ -283,7 +286,11 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
                 mDatasetList.clear();
                 mMovieAdapter.notifyDataSetChanged();
             }
-            mPresenter.loadMovies(1);
+            if(isOnline() || mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)) {
+                mPresenter.loadMovies(1);
+            }else {
+                showNoMovieError();
+            }
             return true;
         });
         popup.show();
@@ -375,11 +382,12 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
                     mPresenter.loadMovies(1);
                 } else {
                     if (mDatasetList.isEmpty()) {
-                        Snackbar.make(mRecylerView,mNoInternetCon,Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(mRecylerView,mNoInternetSnackMessage,Snackbar.LENGTH_SHORT).show();
                         mNoNetworkRetryLayout.setVisibility(View.VISIBLE);
                     }
                 }
-
+                break;
+            default:
                 break;
         }
     }
