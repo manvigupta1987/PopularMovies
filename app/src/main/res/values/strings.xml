@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Movie Studio</string>
-    <string name="no_internet_message">No internet Connectivity. Please check your network settings </string>
+    <string name="no_internet_message">Please check your internet connection and try again later </string>
     <string name="error_message">Failed to connect, Please try after sometime</string>
     <string name="no_Reviews">No Reviews</string>
     <string name="no_Trailers">No Trailers</string>
@@ -40,5 +40,6 @@
     <string name="language">Language:</string>
 
     <string name="sortby">SortBy</string>
+    <string name="retry">Retry</string>
 
 </resources>

@@ -39,4 +39,8 @@
         android:textSize="@dimen/text_size"
         android:visibility="gone"
         android:textColor="@android:color/white"/>
+
+
+    <include layout="@layout/network_retry" />
+
 </android.support.design.widget.CoordinatorLayout>

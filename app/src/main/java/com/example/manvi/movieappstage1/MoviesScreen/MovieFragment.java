@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -23,8 +24,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.manvi.movieappstage1.MovieDetailScreen.MovieDetailActivity;
 import com.example.manvi.movieappstage1.R;
@@ -40,7 +44,8 @@ import butterknife.ButterKnife;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class MovieFragment extends Fragment implements MovieScreenContract.View, MovieAdapter.ListItemClickListener {
+public class MovieFragment extends Fragment implements MovieScreenContract.View,
+        MovieAdapter.ListItemClickListener, View.OnClickListener  {
 
     private MovieScreenContract.Presenter mPresenter;
 
@@ -50,6 +55,10 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     ProgressBar mLoadingBar;
     @BindView(R.id.error_text_view)
     TextView mNoFavMovie;
+    @BindView(R.id.network_retry_full_linearlayout)
+    LinearLayout mNoNetworkRetryLayout;
+    @BindView(R.id.button_retry)
+    Button retryButton;
 
     @BindString(R.string.most_popular_movies)
     String mostPopularMovies;
@@ -57,6 +66,8 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     String topRatedMovies;
     @BindString(R.string.my_favorite_movies)
     String myFavoriteMovies;
+    @BindString(R.string.no_internet_message)
+    String mNoInternetCon;
 
     @BindView(R.id.toolbar)
     Toolbar mtoolbar;
@@ -127,7 +138,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
 
         mRecylerView.setAdapter(mMovieAdapter);
 
-
+        retryButton.setOnClickListener(this);
         mRecylerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -140,8 +151,16 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
                                 ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                         if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
                             if (NetworkUtils.isNetworkConnectionAvailable(getActivity())) {
+                                mNoNetworkRetryLayout.setVisibility(View.GONE);
                                 mPage++;
                                 mPresenter.loadMovies(mPage);
+                            }else {
+                                if (mDatasetList.isEmpty()) {
+                                    mNoNetworkRetryLayout.setVisibility(View.VISIBLE);
+                                    Snackbar.make(mRecylerView, mNoInternetCon, Snackbar.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getContext(), getString(R.string.no_internet_message), Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     }
@@ -209,10 +228,17 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     }
 
     @Override
-    public void showNoFavMovieError() {
+    public void showNoMovieError() {
         mRecylerView.setVisibility(View.INVISIBLE);
         mLoadingBar.setVisibility(View.INVISIBLE);
-        mNoFavMovie.setVisibility(View.VISIBLE);
+        if(mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE)){
+            mNoFavMovie.setVisibility(View.VISIBLE);
+            mNoFavMovie.setText(getString(R.string.no_fav));
+            mNoNetworkRetryLayout.setVisibility(View.INVISIBLE);
+        }else {
+            mNoNetworkRetryLayout.setVisibility(View.VISIBLE);
+            mNoFavMovie.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -289,6 +315,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         mRecylerView.setVisibility(View.VISIBLE);
         mLoadingBar.setVisibility(View.INVISIBLE);
         mNoFavMovie.setVisibility(View.INVISIBLE);
+        mNoNetworkRetryLayout.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -337,5 +364,27 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
             outState.putParcelableArrayList(SAVE_ALL_MOVIES_LIST, dataList);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_retry:
+                if (isOnline()) {
+                    mNoNetworkRetryLayout.setVisibility(View.GONE);
+                    mPresenter.loadMovies(1);
+                } else {
+                    if (mDatasetList.isEmpty()) {
+                        Snackbar.make(mRecylerView,mNoInternetCon,Snackbar.LENGTH_SHORT).show();
+                        mNoNetworkRetryLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                break;
+        }
+    }
+
+    public boolean isOnline(){
+        return NetworkUtils.isNetworkConnectionAvailable(getContext());
     }
 }

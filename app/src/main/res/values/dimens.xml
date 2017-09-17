@@ -15,4 +15,7 @@
     <dimen name="fab_icon_size">24dp</dimen>
     <dimen name="imgae_card">180dp</dimen>
 
+    <dimen name="margin_xxlarge">50dp</dimen>
+    <dimen name="medium">18sp</dimen>
+
 </resources>

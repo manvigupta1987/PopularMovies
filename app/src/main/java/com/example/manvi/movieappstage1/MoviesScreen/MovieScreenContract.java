@@ -11,7 +11,8 @@ public interface MovieScreenContract {
     interface View extends BaseView<Presenter>{
         void setLoadingIndicator(boolean active);
         void showMovies(ArrayList<Movie> movieList);
-        void showNoFavMovieError();
+        void showNoMovieError();
+        boolean isOnline();
     }
 
     interface Presenter extends BasePresenter{

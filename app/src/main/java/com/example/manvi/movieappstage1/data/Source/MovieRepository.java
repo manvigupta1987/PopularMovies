@@ -67,7 +67,7 @@ public class MovieRepository implements MovieDataSource {
         {
             Observable<MovieResponse> movieResponse = mMovieService.getMovies(sortBy, BuildConfig.API_KEY,page);
             return movieResponse.subscribeOn(Schedulers.io())
-                    .map(moviesResponse -> moviesResponse.getResults());
+                    .map(MovieResponse::getResults);
         }else {
             return mMoviesLocalDataSource.getMovies(sortBy,page);
         }

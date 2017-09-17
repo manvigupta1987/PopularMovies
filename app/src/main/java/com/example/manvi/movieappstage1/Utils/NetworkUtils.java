@@ -4,16 +4,22 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.widget.Toast;
+
+import com.example.manvi.movieappstage1.R;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public final class NetworkUtils {
 
-    public static boolean isNetworkConnectionAvailable(Context context)
-    {
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    public static boolean isNetworkConnectionAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()) {
+            return false;
+        }
+        return true;
     }
 
     public static String buildYouTubeThumbNailURLForTrailers(String key)
@@ -33,7 +39,7 @@ public final class NetworkUtils {
         {
             e.printStackTrace();
         }
-        return url.toString();
+        return url != null ? url.toString() : null;
     }
 }
 

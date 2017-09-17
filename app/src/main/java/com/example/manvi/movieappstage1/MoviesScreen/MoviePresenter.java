@@ -4,10 +4,10 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 import android.support.annotation.NonNull;
 
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
+import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
 import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.Source.MovieRepository;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +28,16 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
     @NonNull
     private final CompositeSubscription mSubscriptions;
 
-
     public MoviePresenter(@NonNull MovieRepository moviesRepository,
                           @NonNull MovieScreenContract.View moviesView,
-                          @NonNull BaseSchedulerProvider schedulerProvider) {
+                          @NonNull BaseSchedulerProvider schedulerProvider)
+    {
         mMoviesRepository = checkNotNull(moviesRepository, "moviesRepository cannot be null");
         mMoviesView = checkNotNull(moviesView, "moviesView cannot be null!");
         mSchedulerProvider = checkNotNull(schedulerProvider, "mSchedulerProvider can not be null");
-
         mSubscriptions = new CompositeSubscription();
         mMoviesView.setPresenter(this);
     }
-
 
     @Override
     public void loadMovies(int page) {
@@ -54,10 +52,9 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
                     .subscribe(
                             //onNext
                             this::processMovies,
-                            throwable -> mMoviesView.showNoFavMovieError());
+                            throwable -> mMoviesView.showNoMovieError());
             mSubscriptions.add(subscription);
         } else {
-
             Subscription subscription1 = observable.observeOn(mSchedulerProvider.ui())
                     .subscribe(this::processMovies);
             mSubscriptions.add(subscription1);
@@ -65,9 +62,13 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
     }
 
     private void processMovies(List<Movie> movieList){
+        mMoviesView.setLoadingIndicator(false);
         if(movieList!=null && !movieList.isEmpty()) {
             mMoviesView.setLoadingIndicator(false);
             mMoviesView.showMovies((ArrayList<Movie>) movieList);
+        }
+        else {
+            mMoviesView.showNoMovieError();
         }
     }
 
@@ -84,7 +85,11 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
 
     @Override
     public void subscribe() {
-        loadMovies(1);
+        if(mCurrentFiltering.equals(ConstantsUtils.FAVORITE_MOVIE)  || mMoviesView.isOnline()) {
+            loadMovies(1);
+        }else {
+            mMoviesView.showNoMovieError();
+        }
     }
 
     @Override
