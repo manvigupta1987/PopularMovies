@@ -7,23 +7,13 @@ import android.net.Uri;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by manvi on 1/3/17.
- */
-
 public final class NetworkUtils {
 
     public static boolean isNetworkConnectionAvailable(Context context)
     {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if(activeNetwork!=null && activeNetwork.isConnectedOrConnecting())
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     public static String buildYouTubeThumbNailURLForTrailers(String key)
@@ -35,7 +25,9 @@ public final class NetworkUtils {
 
         URL url = null;
         try{
-            url = new URL(builtUri.toString());
+            if(builtUri!=null) {
+                url = new URL(builtUri.toString());
+            }
 
         }catch(MalformedURLException e)
         {

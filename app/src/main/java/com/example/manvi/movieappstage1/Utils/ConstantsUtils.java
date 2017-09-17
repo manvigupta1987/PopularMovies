@@ -1,9 +1,5 @@
 package com.example.manvi.movieappstage1.Utils;
 
-/**
- * Created by manvi on 16/3/17.
- */
-
 public  class ConstantsUtils {
 
     public final static String POPULAR_MOVIE = "popular";

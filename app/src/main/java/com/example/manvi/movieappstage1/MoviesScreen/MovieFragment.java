@@ -1,7 +1,6 @@
 package com.example.manvi.movieappstage1.MoviesScreen;
 
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -41,10 +40,6 @@ import butterknife.ButterKnife;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by manvi on 11/9/17.
- */
-
 public class MovieFragment extends Fragment implements MovieScreenContract.View, MovieAdapter.ListItemClickListener {
 
     private MovieScreenContract.Presenter mPresenter;
@@ -70,8 +65,9 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     private MovieAdapter mMovieAdapter;
     private boolean mTablet;
     private String mFilterType;
+    private ActionBar mActionBar;
     private ArrayList<Movie> mDatasetList;
-    public static final String SAVE_ALL_MOVIES_LIST = "ALL_MOVIES_LIST";
+    private static final String SAVE_ALL_MOVIES_LIST = "ALL_MOVIES_LIST";
 
 
     public MovieFragment() {
@@ -100,7 +96,7 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         }
 
         if (savedInstanceState == null) {
-            mDatasetList = new ArrayList<Movie>();
+            mDatasetList = new ArrayList<>();
         } else {
             mDatasetList = savedInstanceState.getParcelableArrayList(SAVE_ALL_MOVIES_LIST);
             if (savedInstanceState.containsKey(ConstantsUtils.SAVED_LAYOUT_MANAGER)) {
@@ -159,7 +155,8 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         super.onResume();
         mFilterType = mPresenter.getFiltering();
         setToolBarTitle();
-        if(mDatasetList!=null && mDatasetList.isEmpty()) {
+        if(mFilterType.equals(ConstantsUtils.FAVORITE_MOVIE) ||
+                mDatasetList!=null && mDatasetList.isEmpty()) {
             mPresenter.subscribe();
         }
     }
@@ -173,15 +170,22 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
     }
 
     private void setToolBarTitle() {
+        mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         switch (mFilterType) {
             case ConstantsUtils.POPULAR_MOVIE:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mostPopularMovies);
+                if(mActionBar!=null) {
+                mActionBar.setTitle(mostPopularMovies);
+                }
                 break;
             case ConstantsUtils.TOP_RATED_MOVIE:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(topRatedMovies);
+                if(mActionBar!=null) {
+                    mActionBar.setTitle(topRatedMovies);
+                }
                 break;
             case ConstantsUtils.FAVORITE_MOVIE:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(myFavoriteMovies);
+                if(mActionBar!=null) {
+                    mActionBar.setTitle(myFavoriteMovies);
+                }
                 break;
             default:
                 break;
@@ -226,37 +230,35 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
         inflater.inflate(R.menu.sort_movie_activity, menu);
     }
 
-    public void showFilteringPopUpMenu() {
+    private void showFilteringPopUpMenu() {
         PopupMenu popup = new PopupMenu(getContext(), getActivity().findViewById(R.id.menu_filter));
         popup.getMenuInflater().inflate(R.menu.sort_movie_type, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.popular:
-                        mFilterType = ConstantsUtils.POPULAR_MOVIE;
-                        mPresenter.setFiltering(ConstantsUtils.POPULAR_MOVIE);
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mostPopularMovies);
-                        break;
-                    case R.id.top_rated:
-                        mFilterType = ConstantsUtils.TOP_RATED_MOVIE;
-                        mPresenter.setFiltering(ConstantsUtils.TOP_RATED_MOVIE);
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(topRatedMovies);
-                        break;
-                    case R.id.favourite:
-                        mFilterType = ConstantsUtils.FAVORITE_MOVIE;
-                        mPresenter.setFiltering(ConstantsUtils.FAVORITE_MOVIE);
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(myFavoriteMovies);
-                        break;
-                    default:
-                        break;
-                }
-                if (mDatasetList != null) {
-                    mDatasetList.clear();
-                    mMovieAdapter.notifyDataSetChanged();
-                }
-                mPresenter.loadMovies(1);
-                return true;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.popular:
+                    mFilterType = ConstantsUtils.POPULAR_MOVIE;
+                    mPresenter.setFiltering(ConstantsUtils.POPULAR_MOVIE);
+                    mActionBar.setTitle(mostPopularMovies);
+                    break;
+                case R.id.top_rated:
+                    mFilterType = ConstantsUtils.TOP_RATED_MOVIE;
+                    mPresenter.setFiltering(ConstantsUtils.TOP_RATED_MOVIE);
+                    mActionBar.setTitle(topRatedMovies);
+                    break;
+                case R.id.favourite:
+                    mFilterType = ConstantsUtils.FAVORITE_MOVIE;
+                    mPresenter.setFiltering(ConstantsUtils.FAVORITE_MOVIE);
+                    mActionBar.setTitle(myFavoriteMovies);
+                    break;
+                default:
+                    break;
             }
+            if (mDatasetList != null) {
+                mDatasetList.clear();
+                mMovieAdapter.notifyDataSetChanged();
+            }
+            mPresenter.loadMovies(1);
+            return true;
         });
         popup.show();
     }
@@ -280,28 +282,13 @@ public class MovieFragment extends Fragment implements MovieScreenContract.View,
             mDatasetList.clear();
         }
         if (movieList != null && movieList.size() != 0) {
-            for (Movie movie : movieList) {
-                mDatasetList.add(movie);
-            }
+            mDatasetList.addAll(movieList);
         }
 
         mMovieAdapter.notifyDataSetChanged();
         mRecylerView.setVisibility(View.VISIBLE);
         mLoadingBar.setVisibility(View.INVISIBLE);
         mNoFavMovie.setVisibility(View.INVISIBLE);
-    }
-
-
-    @Override
-    public void showMovieDetailsUI(Movie movie, MovieScreenContract.View view) {
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable(ConstantsUtils.MOVIE_DETAIL, movie);
-//        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-//        intent.putExtras(bundle);
-//        intent.putExtra(ConstantsUtils.TABLET_MODE, mTablet);
-//        String transitionName = getString(R.string.transition_string);
-//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),transitionName);
-//        startActivity(intent);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

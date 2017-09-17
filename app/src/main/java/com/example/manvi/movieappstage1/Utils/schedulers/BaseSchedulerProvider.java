@@ -4,9 +4,6 @@ import android.support.annotation.NonNull;
 
 import rx.Scheduler;
 
-/**
- * Created by manvi on 15/9/17.
- */
 
 public interface BaseSchedulerProvider {
     @NonNull

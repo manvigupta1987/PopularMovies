@@ -4,13 +4,9 @@ import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by manvi on 20/3/17.
- */
-
 public class Trailer {
 
-    public static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
     @SerializedName("id")
     @Expose
     private String mId;
@@ -21,7 +17,7 @@ public class Trailer {
     @Expose
     private String site;
 
-    public String getKey() {
+    private String getKey() {
         return key;
     }
 

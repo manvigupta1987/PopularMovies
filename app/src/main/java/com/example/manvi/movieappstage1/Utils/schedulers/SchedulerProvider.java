@@ -7,10 +7,6 @@ import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by manvi on 15/9/17.
- */
-
 public class SchedulerProvider implements BaseSchedulerProvider {
 
     @Nullable

@@ -18,22 +18,19 @@ import rx.subscriptions.CompositeSubscription;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by manvi on 13/9/17.
- */
 
 public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
     private final MovieRepository mMoviesRepository;
     private final MovieDetailContract.View mMovieDetailView;
-    private Movie mMovie;
+    private final Movie mMovie;
     private String shareMovieTitle;
     private String shareMovieUrl;
 
     @NonNull
     private final BaseSchedulerProvider mSchedulerProvider;
     @NonNull
-    private CompositeSubscription mSubscribtion;
+    private final CompositeSubscription mSubscribtion;
 
     public MovieDetailPresenter(@Nullable Movie movie,
                                 @NonNull MovieRepository moviesRepository,
@@ -50,8 +47,6 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
     @Override
     public void loadReviews() {
-
-        //mSubscribtion.clear();
         Subscription subscription1;
         Observable<List<Reviews>> observable = mMoviesRepository.getReviews(mMovie.getMovieID());
         subscription1 = observable.observeOn(mSchedulerProvider.ui())
@@ -60,7 +55,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
         mSubscribtion.add(subscription1);
     }
 
-    public void processReviews(List<Reviews> reviews) {
+    private void processReviews(List<Reviews> reviews) {
         if (reviews != null) {
             mMovieDetailView.showReviews(true);
             mMovieDetailView.showReviewsData((ArrayList<Reviews>) reviews);
@@ -80,7 +75,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
         mSubscribtion.add(subscription);
     }
 
-    public void processTrailer(List<Trailer> trailer) {
+    private void processTrailer(List<Trailer> trailer) {
         if (trailer != null) {
             mMovieDetailView.showsTrailers(true);
             mMovieDetailView.showTrailersData((ArrayList<Trailer>) trailer);

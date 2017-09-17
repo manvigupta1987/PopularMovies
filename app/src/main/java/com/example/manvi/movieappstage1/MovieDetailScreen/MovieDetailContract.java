@@ -7,10 +7,6 @@ import com.example.manvi.movieappstage1.data.Trailer;
 
 import java.util.ArrayList;
 
-/**
- * Created by manvi on 13/9/17.
- */
-
 public interface MovieDetailContract {
 
     interface View extends BaseView<MovieDetailContract.Presenter> {
@@ -24,11 +20,9 @@ public interface MovieDetailContract {
         void showMovieStatus(boolean isFavourite);
         void setupTrailerRecyclerView();
         void setupReviewLayout();
-        void showDefaultTextView();
         void shareMovie(String title, String urlLink);
         void showTrailersData(ArrayList<Trailer> trailers);
         void showReviewsData(ArrayList<Reviews> reviews);
-
     }
 
     interface Presenter extends BasePresenter{

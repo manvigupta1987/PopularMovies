@@ -1,7 +1,6 @@
 package com.example.manvi.movieappstage1.MovieDetailScreen;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +18,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by manvi on 20/3/17.
- */
-
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerAdapterViewHolder> {
 
     private ArrayList<Trailer> mTrailerList;
 
-    private Context mContext;
-    public ListItemClickListener mlistItemClickListener;
+    private final Context mContext;
+    private final ListItemClickListener mlistItemClickListener;
 
     public TrailerAdapter(Context context, ListItemClickListener listItemClickListener){
         mContext = context;
@@ -36,15 +31,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerA
     }
 
     public interface ListItemClickListener{
-        public void onItemClicked(String url);
+        void onItemClicked(String url);
     }
 
 
     @Override
     public trailerAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.trailer_item, viewGroup,false);
-        trailerAdapterViewHolder AdapterViewHolder = new trailerAdapterViewHolder(view);
-        return AdapterViewHolder;
+        return new trailerAdapterViewHolder(view);
     }
 
     @Override
@@ -52,7 +46,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerA
     {
         String poster = mTrailerList.get(position).getThumbNailUrl();
         if(poster!=null) {
-            //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
             Glide.with(mContext).load(poster)
                     .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -60,8 +53,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.trailerA
                     .placeholder(R.drawable.backdrop_loading_placeholder)
                     .into(holder.mtrailerImage);
         }
-
-
     }
 
 

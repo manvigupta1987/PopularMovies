@@ -10,11 +10,6 @@ import java.util.List;
 
 import rx.Observable;
 
-
-/**
- * Created by manvi on 11/9/17.
- */
-
 public interface MovieDataSource {
 
     Observable<List<Movie>> getMovies(String sortBy, int page);

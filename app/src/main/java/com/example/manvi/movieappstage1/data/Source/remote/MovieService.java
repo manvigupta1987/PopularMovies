@@ -10,10 +10,6 @@ import rx.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-/**
- * Created by manvi on 14/9/17.
- */
-
 public interface MovieService {
     @GET("movie/{sortBy}")
     Observable<MovieResponse> getMovies(

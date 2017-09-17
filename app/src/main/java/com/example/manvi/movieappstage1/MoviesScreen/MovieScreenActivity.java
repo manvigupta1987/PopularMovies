@@ -6,11 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.TransitionInflater;
-import android.view.Gravity;
-import android.view.Window;
 
 import com.example.manvi.movieappstage1.R;
 import com.example.manvi.movieappstage1.Utils.schedulers.SchedulerProvider;
@@ -19,17 +14,10 @@ import com.example.manvi.movieappstage1.data.Source.local.MoviesLocalDataSource;
 import com.example.manvi.movieappstage1.data.Source.remote.MovieApi;
 import com.example.manvi.movieappstage1.data.Source.remote.MovieService;
 
-/**
- * Created by manvi on 12/9/17.
- */
-
 public class MovieScreenActivity extends AppCompatActivity {
 
     private MoviePresenter mMoviePresenter;
-    private MovieService movieService;
-    public static final String FILTER_TYPE = "filter_type";
-
-    private boolean mTwoPane = false; //to check if Tablet layout is required.
+    private static final String FILTER_TYPE = "filter_type";
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -42,15 +30,15 @@ public class MovieScreenActivity extends AppCompatActivity {
         if (tasksFragment == null) {
             // Create the fragment
 
-            tasksFragment = MovieFragment.newInstance(0, isTablet());
+            tasksFragment = MovieFragment.newInstance(0, false);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             transaction.add(R.id.contentFrame, tasksFragment);
             transaction.commit();
         }
-        movieService = MovieApi.getClient().create(MovieService.class);
+        MovieService movieService = MovieApi.getClient().create(MovieService.class);
         MovieRepository movieRepository = MovieRepository.getInstance(
-                MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()),movieService);
+                MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()), movieService);
 
         mMoviePresenter = new MoviePresenter(movieRepository, tasksFragment, SchedulerProvider.getInstance());
         // Load previously saved state, if available.
@@ -65,10 +53,5 @@ public class MovieScreenActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(FILTER_TYPE, mMoviePresenter.getFiltering());
         super.onSaveInstanceState(outState);
-    }
-
-    private boolean isTablet()
-    {
-        return mTwoPane;
     }
 }

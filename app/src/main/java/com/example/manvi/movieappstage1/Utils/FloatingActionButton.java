@@ -10,16 +10,12 @@ import android.view.ViewOutlineProvider;
 import android.widget.Checkable;
 import android.widget.FrameLayout;
 
-/**
- * Created by manvi on 19/3/17.
- */
-
 public class FloatingActionButton extends FrameLayout implements Checkable {
     /**
      * Interface definition for a callback to be invoked when the checked state
      * of a compound button changes.
      */
-    public static interface OnCheckedChangeListener {
+    public interface OnCheckedChangeListener {
 
         /**
          * Called when the checked state of a FAB has changed.
@@ -57,8 +53,8 @@ public class FloatingActionButton extends FrameLayout implements Checkable {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public FloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr,
-                                int defStyleRes) {
+    private FloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr,
+                                 int defStyleRes) {
         super(context, attrs, defStyleAttr);
 
         setClickable(true);
@@ -84,7 +80,7 @@ public class FloatingActionButton extends FrameLayout implements Checkable {
 
     /**
      * Sets the checked/unchecked state of the FAB.
-     * @param checked
+     * @param checked: Boolean variable to show if movie is in fav list or not.
      */
     public void setChecked(boolean checked) {
         // If trying to set the current state, ignore.

@@ -22,17 +22,9 @@ import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-
-/**
- * Created by manvi on 15/3/17.
- */
-
 public class MoviesLocalDataSource implements MovieDataSource {
 
     private static MoviesLocalDataSource INSTANCE;
-
-    private MovieDbHelper mDbHelper;
-    private SqlBrite sqlBrite;
 
     @NonNull
     private final BriteDatabase mDatabaseHelper;
@@ -42,38 +34,42 @@ public class MoviesLocalDataSource implements MovieDataSource {
         checkNotNull(context);
         checkNotNull(schedulerProvider);
 
-        mDbHelper = new MovieDbHelper(context);
-        sqlBrite = SqlBrite.create();
+        MovieDbHelper mDbHelper = new MovieDbHelper(context);
+        SqlBrite sqlBrite = SqlBrite.create();
         mDatabaseHelper = sqlBrite.wrapDatabaseHelper(mDbHelper, schedulerProvider.io());
     }
 
 
-    public static Func1<SqlBrite.Query, List<Movie>> QUERY_TO_LIST_MAPPER =
-            new Func1<SqlBrite.Query, List<Movie>>() {
-        @Override
-        public List<Movie> call(SqlBrite.Query query) {
-            Cursor cursor = query.run();
-            try {
-                List<Movie> movies = new ArrayList<Movie>(cursor.getCount());
-                while (cursor.moveToNext()) {
-                    Movie movie = createFromCursor(cursor);
-                    movies.add(movie);
-                }
-                return movies;
-            } finally {
-                cursor.close();
-            }
-        }
-    };
+    private static final Func1<SqlBrite.Query, List<Movie>> QUERY_TO_LIST_MAPPER =
+            query -> {
+                Cursor cursor = query.run();
+                    try {
+                        if(cursor!=null) {
+                            List<Movie> movies = new ArrayList<>(cursor.getCount());
+                            while (cursor.moveToNext()) {
+                                Movie movie = createFromCursor(cursor);
+                                movies.add(movie);
+                            }
+                            return movies;
+                        }else {
+                            return null;
+                        }
+                    } finally {
+                        if(cursor!=null) {
+                            cursor.close();
+                        }
+                    }
+            };
 
-    public static Func1<SqlBrite.Query, Movie> QUERY_TO_ITEM_MAPPER = new Func1<SqlBrite.Query, Movie>() {
-        @Override
-        public Movie call(SqlBrite.Query query) {
-            Cursor cursor = query.run();
-            try {
+    private static final Func1<SqlBrite.Query, Movie> QUERY_TO_ITEM_MAPPER = query -> {
+        Cursor cursor = query.run();
+        try {
+            if(cursor!=null) {
                 cursor.moveToNext();
-                return createFromCursor(cursor);
-            } finally {
+            }
+            return createFromCursor(cursor);
+        } finally {
+            if(cursor!=null) {
                 cursor.close();
             }
         }
@@ -81,7 +77,8 @@ public class MoviesLocalDataSource implements MovieDataSource {
 
     @NonNull
     private static Movie createFromCursor(@NonNull Cursor cursor) {
-        Movie movie = new Movie(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
+        checkNotNull(cursor);
+        return new Movie(cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID)),
                 cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP)),
                 cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_LANG)),
                 cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_TITLE)),
@@ -91,7 +88,6 @@ public class MoviesLocalDataSource implements MovieDataSource {
                 cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVG)),
                 cursor.getDouble(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_POPULARITY)),
                 cursor.getInt(cursor.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT)));
-        return movie;
     }
 
 
@@ -107,21 +103,18 @@ public class MoviesLocalDataSource implements MovieDataSource {
 
     @Override
     public Observable<List<Movie>> getMovies(String sortBy, int page) {
-        Observable<List<Movie>> selectedMovieObservable = mDatabaseHelper
+
+        return mDatabaseHelper
                 .createQuery(MovieContract.FavoriteMovieEntry.TABLE_NAME, "SELECT * FROM " +MovieContract.FavoriteMovieEntry.TABLE_NAME)
                 .map(QUERY_TO_LIST_MAPPER);
-
-        return selectedMovieObservable;
     }
 
     @Override
     public Observable<Movie> getMovie(@NonNull String movieId) {
 
-        Observable<Movie> selectedMovieObservable = mDatabaseHelper
+        return mDatabaseHelper
                 .createQuery(MovieContract.FavoriteMovieEntry.TABLE_NAME, "SELECT * FROM " +MovieContract.FavoriteMovieEntry.TABLE_NAME + " WHERE " + MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID  + " = ?", String.valueOf(movieId))
                 .map(QUERY_TO_ITEM_MAPPER);
-
-        return  selectedMovieObservable;
     }
 
     @Override

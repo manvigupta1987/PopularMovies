@@ -5,10 +5,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by manvi on 14/9/17.
- */
-
 public class MovieApi {
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
 

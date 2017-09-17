@@ -3,7 +3,6 @@ package com.example.manvi.movieappstage1.MovieDetailScreen;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DividerItemDecoration;
@@ -40,7 +40,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.manvi.movieappstage1.Utils.FloatingActionButton;
 import com.example.manvi.movieappstage1.R;
-import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.example.manvi.movieappstage1.data.Reviews;
 import com.example.manvi.movieappstage1.data.Trailer;
@@ -57,14 +56,11 @@ import butterknife.ButterKnife;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by manvi on 13/9/17.
- */
 
 public class MovieDetailFragment extends Fragment implements MovieDetailContract.View,
                                     FloatingActionButton.OnCheckedChangeListener,
                                     TrailerAdapter.ListItemClickListener{
-    MovieDetailContract.Presenter mPresenter;
+    private MovieDetailContract.Presenter mPresenter;
 
     @BindView(R.id.movie_plot)
     TextView mOverview;
@@ -103,9 +99,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     TextView mNoReviewTextView;
 
     private FloatingActionButton mFloatingButton;
-    private AppBarLayout mAppBarLayoyt;
-    private LinearLayout mLinearLayout;
-    private TextView mNoMovieDetail;
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
     private Snackbar snackbar;
@@ -145,30 +138,17 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(mTablet) {
-            mLinearLayout = (LinearLayout) getActivity().findViewById(R.id.movieDetail);
-            mAppBarLayoyt = (AppBarLayout) getActivity().findViewById(R.id.appbar);
-            mNoMovieDetail = (TextView) getActivity().findViewById(R.id.default_text_view);
-        }
-        mFloatingButton = (FloatingActionButton)getActivity().findViewById(R.id.favourite_fab);
+        mFloatingButton = getActivity().findViewById(R.id.favourite_fab);
         mFloatingButton.setOnCheckedChangeListener(this);
 
-        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-
-    @Override
-    public void showDefaultTextView(){
-        if(mTablet) {
-            mNoMovieDetail.setVisibility(View.VISIBLE);
-            mNoMovieDetail.setText(getArguments().getString(ConstantsUtils.DEFAULT_TEXT));
-            mFloatingButton.setVisibility(View.INVISIBLE);
-            mLinearLayout.setVisibility(View.INVISIBLE);
-            mAppBarLayoyt.setVisibility(View.INVISIBLE);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if(actionBar!=null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+
 
     @Override
     public void showMovieStatus(boolean isFavourite) {
@@ -293,15 +273,12 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                     {
                         super.onResourceReady(bitmap, anim);
 
-                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                            @Override
-                            public void onGenerated(Palette palette) {
-                                int primaryDark = ContextCompat.getColor(getContext(),R.color.colorPrimaryDark);
-                                int primary = ContextCompat.getColor(getContext(),R.color.colorPrimary);
-                                mCollapsingToolbar.setContentScrimColor(palette.getMutedColor(primary));
-                                mCollapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
-                                setStatusBarColor(palette.getDarkMutedColor(primaryDark));
-                            }
+                        Palette.from(bitmap).generate(palette -> {
+                            int primaryDark = ContextCompat.getColor(getContext(),R.color.colorPrimaryDark);
+                            int primary = ContextCompat.getColor(getContext(),R.color.colorPrimary);
+                            mCollapsingToolbar.setContentScrimColor(palette.getMutedColor(primary));
+                            mCollapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
+                            setStatusBarColor(palette.getDarkMutedColor(primaryDark));
                         });
                     }
                 });
@@ -378,12 +355,7 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         else
         {
             snackbar = snackbar.make(getView(), getString(R.string.no_internet), Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.dismiss), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            snackbar.dismiss();
-                        }
-                    });
+                    .setAction(getString(R.string.dismiss), view -> snackbar.dismiss());
             snackbar.show();
         }
     }

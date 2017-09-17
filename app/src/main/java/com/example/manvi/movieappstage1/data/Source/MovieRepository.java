@@ -15,14 +15,9 @@ import com.example.manvi.movieappstage1.data.TrailerResponse;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
-/**
- * Created by manvi on 11/9/17.
- */
 
 public class MovieRepository implements MovieDataSource {
 
@@ -72,12 +67,7 @@ public class MovieRepository implements MovieDataSource {
         {
             Observable<MovieResponse> movieResponse = mMovieService.getMovies(sortBy, BuildConfig.API_KEY,page);
             return movieResponse.subscribeOn(Schedulers.io())
-                    .map(new Func1<MovieResponse, List<Movie>>() {
-                        @Override
-                        public List<Movie> call(MovieResponse moviesResponse) {
-                            return moviesResponse.getResults();
-                        }
-                    });
+                    .map(moviesResponse -> moviesResponse.getResults());
         }else {
             return mMoviesLocalDataSource.getMovies(sortBy,page);
         }
@@ -86,8 +76,7 @@ public class MovieRepository implements MovieDataSource {
     @Override
     public Observable<Movie> getMovie(@NonNull String movieId) {
         checkNotNull(movieId);
-        Observable<Movie> movieData = mMoviesLocalDataSource.getMovie(movieId);
-        return movieData;
+        return mMoviesLocalDataSource.getMovie(movieId);
     }
 
     @Override
@@ -107,12 +96,7 @@ public class MovieRepository implements MovieDataSource {
         checkNotNull(movieId);
         Observable<ReviewResponse> reviewResponse = mMovieService.getMovieReviews(movieId, BuildConfig.API_KEY);
         return reviewResponse.subscribeOn(Schedulers.io())
-                .map(new Func1<ReviewResponse, List<Reviews>>() {
-                    @Override
-                    public List<Reviews> call(ReviewResponse reviewResponse1) {
-                        return reviewResponse1.results;
-                    }
-                });
+                .map(reviewResponse1 -> reviewResponse1.results);
     }
 
     @Override
@@ -120,11 +104,6 @@ public class MovieRepository implements MovieDataSource {
         checkNotNull(movieId);
         Observable<TrailerResponse> trailerResponse = mMovieService.getMovieTrailers(movieId, BuildConfig.API_KEY);
         return trailerResponse.subscribeOn(Schedulers.io())
-                .map(new Func1<TrailerResponse, List<Trailer>>() {
-                    @Override
-                    public List<Trailer> call(TrailerResponse trailerResponse1) {
-                        return trailerResponse1.results;
-                    }
-                });
+                .map(trailerResponse1 -> trailerResponse1.results);
     }
 }

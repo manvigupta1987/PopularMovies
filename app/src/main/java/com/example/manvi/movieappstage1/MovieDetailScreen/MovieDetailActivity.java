@@ -13,15 +13,9 @@ import com.example.manvi.movieappstage1.data.Source.local.MoviesLocalDataSource;
 import com.example.manvi.movieappstage1.data.Source.remote.MovieApi;
 import com.example.manvi.movieappstage1.data.Source.remote.MovieService;
 
-
-/**
- * Created by manvi on 13/9/17.
- */
-
 public class MovieDetailActivity extends AppCompatActivity {
 
     private Movie movie;
-    private MovieService movieService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +41,11 @@ public class MovieDetailActivity extends AppCompatActivity {
             transaction.add(R.id.container, movieDetailFragment);
             transaction.commit();
         }
-        movieService = MovieApi.getClient().create(MovieService.class);
-        MovieRepository movieRepository = MovieRepository.getInstance(MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()),movieService);
+        MovieService movieService = MovieApi.getClient().create(MovieService.class);
+        MovieRepository movieRepository = MovieRepository.getInstance(MoviesLocalDataSource.getInstance(getApplicationContext(), SchedulerProvider.getInstance()), movieService);
 
         // Create the presenter
-        new MovieDetailPresenter(movie,
+         new MovieDetailPresenter(movie,
                 movieRepository,
                 movieDetailFragment,
                 SchedulerProvider.getInstance());

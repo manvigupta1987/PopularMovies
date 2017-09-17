@@ -2,11 +2,8 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -30,16 +27,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by manvi on 1/3/17.
- */
-
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
     private ArrayList<Movie> mDatasetList;
 
-    private Context mContext;
-    private ListItemClickListener mlistItemClickListener;
+    private final Context mContext;
+    private final ListItemClickListener mlistItemClickListener;
 
     public MovieAdapter(Context context, ListItemClickListener listItemClickListener, ArrayList<Movie> dataList) {
         mContext = context;
@@ -55,8 +48,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_list_item, viewGroup, false);
-        MovieAdapterViewHolder movieAdapterViewHolder = new MovieAdapterViewHolder(view);
-        return movieAdapterViewHolder;
+        return new MovieAdapterViewHolder(view);
     }
 
     @Override
@@ -82,13 +74,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
                                 super.onResourceReady(bitmap, anim);
                                 scheduleStartPostponedTransition(holder.mMovieImage);
-                                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                                    @Override
-                                    public void onGenerated(Palette palette) {
-                                        holder.mTitleBackground.setBackgroundColor(palette.getDarkVibrantColor(ContextCompat.
-                                                getColor(mContext, R.color.black_translucent_60)));
-                                    }
-                                });
+                                Palette.from(bitmap).generate(palette -> holder.mTitleBackground.setBackgroundColor(palette.getDarkVibrantColor(ContextCompat.
+                                        getColor(mContext, R.color.black_translucent_60))));
                             }
                         });
             }

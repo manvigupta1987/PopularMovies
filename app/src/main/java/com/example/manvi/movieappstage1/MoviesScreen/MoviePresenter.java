@@ -2,7 +2,6 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 
 
 import android.support.annotation.NonNull;
-import android.view.View;
 
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
 import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
@@ -19,10 +18,6 @@ import rx.subscriptions.CompositeSubscription;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by manvi on 12/9/17.
- */
-
 public class MoviePresenter implements MovieScreenContract.Presenter {
 
     private final MovieRepository mMoviesRepository;
@@ -31,7 +26,7 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
     @NonNull
     private final BaseSchedulerProvider mSchedulerProvider;
     @NonNull
-    private CompositeSubscription mSubscriptions;
+    private final CompositeSubscription mSubscriptions;
 
 
     public MoviePresenter(@NonNull MovieRepository moviesRepository,
@@ -52,7 +47,7 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
         mSubscriptions.clear();
 
         Observable<List<Movie>> observable = mMoviesRepository.getMovies(mCurrentFiltering, page);
-        if (mCurrentFiltering == ConstantsUtils.FAVORITE_MOVIE) {
+        if (mCurrentFiltering.equals(ConstantsUtils.FAVORITE_MOVIE)) {
             Subscription subscription = observable
                     .subscribeOn(mSchedulerProvider.io())
                     .observeOn(mSchedulerProvider.ui())
@@ -69,17 +64,11 @@ public class MoviePresenter implements MovieScreenContract.Presenter {
         }
     }
 
-    public void processMovies(List<Movie> movieList){
+    private void processMovies(List<Movie> movieList){
         if(movieList!=null && !movieList.isEmpty()) {
             mMoviesView.setLoadingIndicator(false);
             mMoviesView.showMovies((ArrayList<Movie>) movieList);
         }
-    }
-
-    @Override
-    public void openMovieDetails(Movie movie, MovieScreenContract.View view) {
-        checkNotNull(movie, "requestedMovie cannot be null!");
-        mMoviesView.showMovieDetailsUI(movie, view);
     }
 
     @Override

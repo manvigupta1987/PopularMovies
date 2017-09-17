@@ -3,7 +3,7 @@
 xmlns:app="http://schemas.android.com/apk/res-auto">
 <item
     android:id="@+id/menu_filter"
-    android:title="sortby"
+    android:title="@string/sortby"
     android:icon="@drawable/ic_filter_list"
     app:showAsAction="always" />
 </menu>

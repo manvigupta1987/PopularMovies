@@ -1,6 +1,5 @@
 package com.example.manvi.movieappstage1.MovieDetailScreen;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +14,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by manvi on 20/3/17.
- */
-
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdapterViewHolder> {
 
     private ArrayList<Reviews> mReviewList;
@@ -29,8 +24,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
     @Override
     public ReviewAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.review_item, viewGroup,false);
-        ReviewAdapterViewHolder AdapterViewHolder = new ReviewAdapterViewHolder(view);
-        return AdapterViewHolder;
+        return new ReviewAdapterViewHolder(view);
     }
 
     @Override

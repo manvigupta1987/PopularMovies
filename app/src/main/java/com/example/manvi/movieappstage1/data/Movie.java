@@ -6,15 +6,9 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by manvi on 1/3/17.
- */
-
 public class Movie implements Parcelable {
 
     private final String BASE_URL = "http://image.tmdb.org/t/p/";
-    private final String BACKDROP_SIZE = "w342";
-    private final String POSTER_SIZE = "w185";
 
     @SerializedName("id")
     @Expose
@@ -45,7 +39,7 @@ public class Movie implements Parcelable {
     private Double mPopularity;
     @SerializedName("vote_count")
     @Expose
-    private int mVoteCount;
+    private final int mVoteCount;
 
     public Movie(int MovieId, String BackDropPath, String OriginalLang,
                  String title, String poster_path, String overview,
@@ -63,7 +57,7 @@ public class Movie implements Parcelable {
         this.mVoteCount = VoteCount;
     }
 
-    public Movie(Parcel source) {
+    private Movie(Parcel source) {
 
         this.mMovieId = source.readInt();
         this.mBackDropPath = source.readString();
@@ -95,8 +89,8 @@ public class Movie implements Parcelable {
 
     public String getBackDropPath() {
         if (mBackDropPath != null && !mBackDropPath.equals("")) {
-            String poster_path = BASE_URL + BACKDROP_SIZE + mBackDropPath;
-            return (poster_path);
+            String BACKDROP_SIZE = "w342";
+            return (BASE_URL + BACKDROP_SIZE + mBackDropPath);
         } else {
             return null;
         }
@@ -106,8 +100,8 @@ public class Movie implements Parcelable {
     //returns the complete path of the image poster.
     public String getPoster_path() {
         if (mPoster != null && !mPoster.equals("")) {
-            String poster_path = BASE_URL + POSTER_SIZE + mPoster;
-            return (poster_path);
+            String POSTER_SIZE = "w185";
+            return (BASE_URL + POSTER_SIZE + mPoster);
         } else {
             return null;
         }
@@ -148,8 +142,7 @@ public class Movie implements Parcelable {
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel source) {
-            Movie movie = new Movie(source);
-            return movie;
+            return new Movie(source);
         }
 
         public Movie[] newArray(int size) {
