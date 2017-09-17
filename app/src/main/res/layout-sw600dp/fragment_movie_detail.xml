@@ -85,6 +85,9 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:paddingLeft="12dp"
+                        android:paddingStart="12dp"
+                        android:paddingRight="2dp"
+                        android:paddingEnd="2dp"
                         android:paddingTop="@dimen/padding_dimen">
 
 
@@ -96,39 +99,37 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Released In:"
+                                android:text="@string/released"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Rating:"
+                                android:text="@string/rating"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Votes:"
+                                android:text="@string/votes"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Language:"
+                                android:text="@string/language"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-                            <!--<TextView-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:text="Genre:"-->
-                                <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium" />-->
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:paddingLeft="5dp">
+                            android:paddingLeft="5dp"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="2dp"
+                            android:paddingRight="2dp">
 
                             <TextView
                                 android:id="@+id/movie_releaseDate"
@@ -158,12 +159,6 @@
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 tools:text="TextView" />
 
-                            <!--<TextView-->
-                                <!--android:id="@+id/movie_genre"-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-                                <!--tools:text="TextView" />-->
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -213,7 +208,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Trailers"
+                        android:text="@string/trailer"
                         android:contentDescription="@string/trailer"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 

@@ -51,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:drawableLeft="@mipmap/rating_star_small"
+            android:drawableStart="@mipmap/rating_star_small"
             android:drawablePadding="2dp"
             android:gravity="center"
             android:padding="4dp"

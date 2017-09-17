@@ -80,6 +80,7 @@
             style="@style/matchParent"
             android:orientation="vertical"
             android:clipChildren="false"
+            android:elevation="8dp"
             android:paddingBottom="@dimen/activity_vertical_margin">
 
             <android.support.v7.widget.CardView
@@ -106,7 +107,11 @@
                         style="@style/matchParent"
                         android:orientation="horizontal"
                         android:paddingLeft="12dp"
-                        android:paddingTop="@dimen/padding_dimen">
+                        android:paddingStart="12dp"
+                        android:paddingRight="2dp"
+                        android:paddingEnd="2dp"
+                        android:paddingTop="@dimen/padding_dimen"
+                        tools:ignore="RtlHardcoded">
 
 
                         <LinearLayout
@@ -117,32 +122,34 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Released In:"
+                                android:text="@string/released"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Rating:"
+                                android:text="@string/rating"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Votes:"
+                                android:text="@string/votes"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Language:"
+                                android:text="@string/language"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
                         </LinearLayout>
 
                         <LinearLayout
                             style="@style/matchParent"
                             android:orientation="vertical"
-                            android:paddingLeft="5dp">
+                            android:paddingLeft="5dp"
+                            android:paddingRight="2dp"
+                            tools:ignore="RtlHardcoded">
 
                             <TextView
                                 android:id="@+id/movie_releaseDate"
@@ -225,12 +232,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/trailer"
-                        android:text="Trailers"
-                        android:gravity="left"
+                        android:text="@string/trailer"
+                        android:gravity="left|start"
                         android:paddingBottom="12dp"
                         android:paddingLeft="12dp"
                         android:paddingRight="12dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        tools:ignore="RtlHardcoded" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/trailerRecyclerView"
@@ -267,17 +275,18 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="left"
+                        android:gravity="left|start"
                         android:padding="12dp"
                         android:contentDescription="@string/review"
                         android:text="@string/review"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        tools:ignore="RtlHardcoded" />
 
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/ReviewRecyclerView"
                         style="@style/matchParent"
-                        android:clickable="true"></android.support.v7.widget.RecyclerView>
+                        android:clickable="true" />
 
                     <TextView
                         android:id="@+id/noReview_text_view"

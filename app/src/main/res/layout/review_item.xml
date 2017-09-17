@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -18,12 +19,13 @@
         android:id="@+id/review_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
+        android:layout_gravity="left|start"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:ellipsize="end"
         android:lineSpacingMultiplier="1.2"
         android:maxLines="15"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />  <!--Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable. -->
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:ignore="RtlHardcoded" />  <!--Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable. -->
 </LinearLayout>
