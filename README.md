@@ -21,15 +21,14 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 * [ButterKnife](https://github.com/JakeWharton/butterknife)
 * [RxJava](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-* [Dagger](https://github.com/square/dagger)
 * [Retrofit](https://github.com/square/retrofit)
-* [Picasso](http://square.github.io/picasso/)
+* [Glide](https://github.com/bumptech/glide)
 * [Palette API](https://developer.android.com/training/material/palette-colors.html)
 * [Guava](https://github.com/google/guava)
-
+* [Sqlbrite](https://github.com/square/sqlbrite)
+* [Gson](https://github.com/google/gson)
 
 ## UI Component
-* [View Pager](https://github.com/codepath/android_guides/wiki/ViewPager-with-FragmentPagerAdapter)
 * [GridLayoutManager](https://developer.android.com/reference/android/support/v7/widget/GridLayoutManager.html)
 * [recyclerView](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html)
 * [CollapsingToolBar](https://developer.android.com/reference/android/support/design/widget/CollapsingToolbarLayout.html)
@@ -37,16 +36,15 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 * [Cardview](https://developer.android.com/reference/android/support/v7/widget/CardView.html)
 * [CordinatorLayout](https://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.html)
 * [SnackBar](https://developer.android.com/reference/android/support/design/widget/Snackbar.html)
+* [Shared Transition Animation](https://developer.android.com/training/material/animations.html)
 
 ## App Archtecture
 * [MVP Design Pattern](https://github.com/googlesamples/android-architecture/tree/todo-mvp/)
 
 ## Screens
 
-![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot1.png) ![Screenshot2](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot2.png) ![Screenshot3](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot3.png)
-![Screenshot4](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Nexus%206P-Screenshot4.png)
-
-![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Selection_076_1.png) ![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/master/ScreenShots/Selection_077_1.png)
+![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/branch_MVP/ScreenShots/MainScreen.png) ![Screenshot2](https://github.com/manvigupta1987/PopularMovies/blob/branch_MVP/ScreenShots/DetailScreen.png) ![Screenshot3](https://github.com/manvigupta1987/PopularMovies/blob/branch_MVP/ScreenShots/MainScreen1.png)
+![Screenshot4](https://github.com/manvigupta1987/PopularMovies/blob/branch_MVP/ScreenShots/FavouriteMovies.png) ![Screenshot1](https://github.com/manvigupta1987/PopularMovies/blob/branch_MVP/ScreenShots/TopRatedMovies.png)
 
 
 
