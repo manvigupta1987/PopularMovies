@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.manvi.movieappstage1">
+    package="com.entertainment.manvi.MyMovies"
+    android:versionCode="1"
+    android:versionName="v1.0">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".MoviesScreen.MovieScreenActivity"
+        <activity android:name="com.entertainment.manvi.MyMovies.MoviesScreen.MovieScreenActivity"
             android:launchMode="singleTop"
             tools:ignore="InnerclassSeparator">
             <intent-filter>
@@ -23,12 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetailScreen.MovieDetailActivity"
-            android:parentActivityName=".MoviesScreen.MovieScreenActivity"
+            android:name="com.entertainment.manvi.MyMovies.MovieDetailScreen.MovieDetailActivity"
+            android:parentActivityName="com.entertainment.manvi.MyMovies.MoviesScreen.MovieScreenActivity"
             tools:ignore="InnerclassSeparator">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MoviesScreen.MovieScreenActivity" />
+                android:value="com.entertainment.manvi.MyMovies.MoviesScreen.MovieScreenActivity" />
         </activity>
     </application>
 </manifest>

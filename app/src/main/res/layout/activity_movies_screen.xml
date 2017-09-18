@@ -8,5 +8,5 @@ android:id="@+id/contentFrame"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:layout="@layout/fragment_movies"
-tools:context="com.example.manvi.movieappstage1.MoviesScreen.MovieScreenActivity"
+tools:context="com.entertainment.manvi.MyMovies.MoviesScreen.MovieScreenActivity"
     tools:ignore="MergeRootFrame" />

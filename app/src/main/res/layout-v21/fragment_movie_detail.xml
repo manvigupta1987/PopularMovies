@@ -47,7 +47,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <com.example.manvi.movieappstage1.Utils.FloatingActionButton
+    <com.entertainment.manvi.MyMovies.Utils.FloatingActionButton
         android:id="@+id/favourite_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
@@ -69,7 +69,7 @@
             android:src="@drawable/favourite_selector"
             android:contentDescription="@string/mark_as_favourite"/>
 
-    </com.example.manvi.movieappstage1.Utils.FloatingActionButton>
+    </com.entertainment.manvi.MyMovies.Utils.FloatingActionButton>
 
     <android.support.v4.widget.NestedScrollView
         style="@style/matchParent"
