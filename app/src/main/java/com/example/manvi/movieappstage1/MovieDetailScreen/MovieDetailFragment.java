@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -29,10 +30,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -57,7 +61,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MovieDetailFragment extends Fragment implements MovieDetailContract.View,
                                     FloatingActionButton.OnCheckedChangeListener,
-                                    TrailerAdapter.ListItemClickListener{
+                                    View.OnClickListener{
     private MovieDetailContract.Presenter mPresenter;
 
     @BindView(R.id.movie_plot)
@@ -74,18 +78,18 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     TextView mMovieVotes;
     @BindView(R.id.language)
     TextView mMovieLanguage;
+    @BindView(R.id.trailers)
+    LinearLayout trailers;
+    @BindView(R.id.appbar)
+    AppBarLayout mAppBar;
 
-    @BindDrawable(R.drawable.no_image)
-    Drawable error_image;
 
-    @BindDrawable(R.drawable.backdrop_loading_placeholder)
-    Drawable loading_backdrop;
+    @BindView(R.id.trailers_container)
+    HorizontalScrollView horizontalScrollView;
+
 
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbar;
-
-    @BindView(R.id.trailerRecyclerView)
-    RecyclerView mTrailerRecyclerView;
 
     @BindView(R.id.noTrailer_text_view)
     TextView mNoTrailerTextView;
@@ -97,7 +101,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     TextView mNoReviewTextView;
 
     private FloatingActionButton mFloatingButton;
-    private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
     private Snackbar snackbar;
     private boolean mTablet;
@@ -145,6 +148,17 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         if(actionBar!=null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if(mFloatingButton.getTop() <= 0) {
+                    mFloatingButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mFloatingButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
@@ -153,31 +167,13 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         mFloatingButton.setCheckedState(isFavourite);
     }
 
-    /*
-       this function will setup the recycler view with horizontal linear layout.
-     */
-    @Override
-    public void setupTrailerRecyclerView()
-    {
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        mTrailerRecyclerView.setLayoutManager(linearLayoutManager1);
-        mTrailerRecyclerView.setHasFixedSize(true);
-
-        mTrailerAdapter = new TrailerAdapter(getActivity(), this);
-        mTrailerRecyclerView.setAdapter(mTrailerAdapter);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mTrailerRecyclerView.getContext(),
-                linearLayoutManager1.getOrientation());
-        mTrailerRecyclerView.addItemDecoration(dividerItemDecoration);
-    }
-
     @Override
     public void showsTrailers(boolean isTrailerPresent) {
         if(isTrailerPresent) {
-            mTrailerRecyclerView.setVisibility(View.VISIBLE);
+            horizontalScrollView.setVisibility(View.VISIBLE);
             mNoTrailerTextView.setVisibility(View.INVISIBLE);
         }else {
-            mTrailerRecyclerView.setVisibility(View.INVISIBLE);
+            horizontalScrollView.setVisibility(View.INVISIBLE);
             mNoTrailerTextView.setVisibility(View.VISIBLE);
         }
     }
@@ -194,8 +190,8 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     }
 
     /*
-               this function will setup the recycler view with vertical linear layout for Reviews.
-            */
+       This function will setup the recycler view with vertical linear layout for Reviews.
+    */
     @Override
     public void setupReviewLayout()
     {
@@ -254,16 +250,16 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                 load(poster_path).
                 asBitmap().
                 diskCacheStrategy(DiskCacheStrategy.RESULT).
-                placeholder(R.drawable.backdrop_loading_placeholder).
-                error(R.drawable.no_image).
+                placeholder(R.color.colorPrimary).
+                error(R.drawable.temp).
                 into(mImageView);
         mImageView.setContentDescription(title);
 
         Glide.with(getActivity()).load(backDropImagePath)
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .placeholder(loading_backdrop)
-                .error(error_image)
+                .placeholder(R.color.colorPrimary)
+                .error(R.drawable.temp)
                 .into(new BitmapImageViewTarget(mBackDropImage)
                 {
                     @Override
@@ -343,25 +339,30 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     }
 
     @Override
-    public void onItemClicked(String url) {
-        if(NetworkUtils.isNetworkConnectionAvailable(getActivity())) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                getContext().startActivity(intent);
-            }
-        }
-        else
-        {
-            snackbar = snackbar.make(getView(), getString(R.string.no_internet), Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.dismiss), view -> snackbar.dismiss());
-            snackbar.show();
-        }
-    }
-
-    @Override
     public void showTrailersData(ArrayList<Trailer> trailers) {
         if(trailers!=null) {
-            mTrailerAdapter.setTrailerListData(trailers);
+            this.trailers.setVisibility(View.VISIBLE);
+            horizontalScrollView.setVisibility(View.VISIBLE);
+            this.trailers.removeAllViews();
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            RequestManager glide = Glide.with(getActivity());
+
+            for (Trailer trailer: trailers){
+                View thumbContainer = inflater.inflate(R.layout.trailer_item, this.trailers, false);
+                String poster = trailer.getThumbNailUrl();
+                ImageView thumbView = ButterKnife.findById(thumbContainer, R.id.trailer_image);
+                thumbView.setTag(R.id.trailer_image,trailer.getVideoUrl());
+
+                thumbView.requestLayout();
+                thumbView.setOnClickListener(this);
+                glide.load(poster)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .error(R.drawable.temp)
+                        .placeholder(R.color.colorPrimary)
+                        .into(thumbView);
+                this.trailers.addView(thumbContainer);
+            }
         }
     }
 
@@ -369,6 +370,22 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     public void showReviewsData(ArrayList<Reviews> reviews) {
         if(reviews!=null){
             mReviewAdapter.setReviewListData(reviews);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(NetworkUtils.isNetworkConnectionAvailable(getActivity()))
+        {
+            String videoUrl = (String) (view).getTag(R.id.trailer_image);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                getContext().startActivity(intent);
+            }
+        }
+        else
+        {
+            Snackbar.make(view, getString(R.string.no_internet), Snackbar.LENGTH_SHORT).show();
         }
     }
 }

@@ -61,14 +61,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             holder.mTVRating.setContentDescription(holder.mTVRating.getText());
             String poster = movie.getPoster_path();
             if (poster != null) {
-                //RGB_565 is used for the memory optimization. R plane spends 5 bit per pixel instead of 8 bits. Same applies to other plane.
-//                Picasso.with(mContext).load(poster).placeholder(R.drawable.backdrop_loading_placeholder)
-//                        .error(R.drawable.no_image).config(Bitmap.Config.RGB_565).into(holder.mMovieImage);
                 Glide.with(mContext).load(poster)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .error(R.drawable.no_image)
-                        .placeholder(R.drawable.backdrop_loading_placeholder)
+                        .error(R.drawable.temp)
+                        .placeholder(R.color.colorPrimary)
                         .into(new BitmapImageViewTarget(holder.mMovieImage) {
                             @Override
                             public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {

@@ -136,7 +136,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override
     public void subscribe() {
         mMovieDetailView.setupReviewLayout();
-        mMovieDetailView.setupTrailerRecyclerView();
+        //mMovieDetailView.setupTrailerRecyclerView();
         loadTrailers();
         loadReviews();
         checkForFavouriteMovie();

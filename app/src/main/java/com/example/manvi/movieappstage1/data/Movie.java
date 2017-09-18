@@ -89,7 +89,7 @@ public class Movie implements Parcelable {
 
     public String getBackDropPath() {
         if (mBackDropPath != null && !mBackDropPath.equals("")) {
-            String BACKDROP_SIZE = "w342";
+            String BACKDROP_SIZE = "w500";
             return (BASE_URL + BACKDROP_SIZE + mBackDropPath);
         } else {
             return null;
@@ -100,7 +100,7 @@ public class Movie implements Parcelable {
     //returns the complete path of the image poster.
     public String getPoster_path() {
         if (mPoster != null && !mPoster.equals("")) {
-            String POSTER_SIZE = "w185";
+            String POSTER_SIZE = "w342";
             return (BASE_URL + POSTER_SIZE + mPoster);
         } else {
             return null;

@@ -17,7 +17,7 @@ public class Trailer {
     @Expose
     private String site;
 
-    private String getKey() {
+    public String getKey() {
         return key;
     }
 

@@ -41,5 +41,6 @@
 
     <string name="sortby">SortBy</string>
     <string name="retry">Retry</string>
+    <string name="content_description_movie_video">Movie video thumbnail</string>
 
 </resources>

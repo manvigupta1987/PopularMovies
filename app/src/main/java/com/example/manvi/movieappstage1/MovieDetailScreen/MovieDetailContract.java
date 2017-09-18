@@ -18,7 +18,7 @@ public interface MovieDetailContract {
         void showsTrailers(boolean isTrailerPresent);
         void showReviews(boolean isReviewPresent);
         void showMovieStatus(boolean isFavourite);
-        void setupTrailerRecyclerView();
+        //void setupTrailerRecyclerView();
         void setupReviewLayout();
         void shareMovie(String title, String urlLink);
         void showTrailersData(ArrayList<Trailer> trailers);

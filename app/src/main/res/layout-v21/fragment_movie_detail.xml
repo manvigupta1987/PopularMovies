@@ -240,11 +240,20 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         tools:ignore="RtlHardcoded" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/trailerRecyclerView"
-                        style="@style/matchParent"
-                        android:clickable="true">
-                    </android.support.v7.widget.RecyclerView>
+                    <HorizontalScrollView
+                        android:id="@+id/trailers_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/trailers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"/>
+
+                    </HorizontalScrollView>
+
 
                     <TextView
                         android:id="@+id/noTrailer_text_view"
