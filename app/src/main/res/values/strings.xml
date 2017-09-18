@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Movie Studio</string>
+    <string name="app_name">MyMovies</string>
     <string name="no_internet_message">Please check your internet connection and try again later </string>
     <string name="no_connectivity">No internet connection</string>
     <string name="no_Reviews">No Reviews</string>
