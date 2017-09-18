@@ -4,7 +4,6 @@ package com.example.manvi.movieappstage1.MoviesScreen;
 import android.support.annotation.NonNull;
 
 import com.example.manvi.movieappstage1.Utils.ConstantsUtils;
-import com.example.manvi.movieappstage1.Utils.NetworkUtils;
 import com.example.manvi.movieappstage1.Utils.schedulers.BaseSchedulerProvider;
 import com.example.manvi.movieappstage1.data.Movie;
 import com.example.manvi.movieappstage1.data.Source.MovieRepository;

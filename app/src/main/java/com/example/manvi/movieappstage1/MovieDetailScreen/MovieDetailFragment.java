@@ -3,13 +3,11 @@ package com.example.manvi.movieappstage1.MovieDetailScreen;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -52,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -80,8 +77,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     TextView mMovieLanguage;
     @BindView(R.id.trailers)
     LinearLayout trailers;
-    @BindView(R.id.appbar)
-    AppBarLayout mAppBar;
 
 
     @BindView(R.id.trailers_container)
@@ -148,17 +143,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         if(actionBar!=null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if(mFloatingButton.getTop() <= 0) {
-                    mFloatingButton.setVisibility(View.INVISIBLE);
-                } else {
-                    mFloatingButton.setVisibility(View.VISIBLE);
-                }
-            }
-        });
     }
 
 
@@ -385,7 +369,9 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         }
         else
         {
-            Snackbar.make(view, getString(R.string.no_internet), Snackbar.LENGTH_SHORT).show();
+            snackbar = Snackbar.make(view, getString(R.string.no_internet), Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.dismiss), view1 -> snackbar.dismiss());
+            snackbar.show();
         }
     }
 }

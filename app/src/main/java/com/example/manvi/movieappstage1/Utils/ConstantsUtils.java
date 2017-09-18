@@ -12,6 +12,4 @@ public  class ConstantsUtils {
     public final static String TABLET_MODE  = "tablet";
 
     public static final String ARG_MOVIE_LIST = "movie-list";
-
-    public static final String DEFAULT_TEXT = "default";
 }
