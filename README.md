@@ -16,16 +16,15 @@ With this app, User can:
 App uses The Movie Database API. API key is required in order to run the app. You can create your own API key using the link ! https://www.themoviedb.org/account/signup?language=en-EN. When you get it, just set it here: "MovieAppStage1/gradle.properties"
 MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
+## MVP Version:
+This version uses various libraries like [RxJava](https://github.com/ReactiveX/RxJava), [RxAndroid](https://github.com/ReactiveX/RxAndroid), [Retrofit](https://github.com/square/retrofit), [Guava](https://github.com/google/guava)
+[PopularMoviesApp MVP Version](https://github.com/manvigupta1987/PopularMovies/tree/branch_MVP)
+
 ## Libraries
 
 * [ButterKnife](https://github.com/JakeWharton/butterknife)
-* [RxJava](https://github.com/ReactiveX/RxJava)
-* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-* [Dagger](https://github.com/square/dagger)
-* [Retrofit](https://github.com/square/retrofit)
 * [Picasso](http://square.github.io/picasso/)
 * [Palette API](https://developer.android.com/training/material/palette-colors.html)
-* [Guava](https://github.com/google/guava)
 
 
 ## UI Component
@@ -38,8 +37,6 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 * [CordinatorLayout](https://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.html)
 * [SnackBar](https://developer.android.com/reference/android/support/design/widget/Snackbar.html)
 
-## App Archtecture
-* [MVP Design Pattern](https://github.com/googlesamples/android-architecture/tree/todo-mvp/)
 
 ## Screens
 
