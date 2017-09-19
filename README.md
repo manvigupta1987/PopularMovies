@@ -18,7 +18,7 @@ MyMovieDbApiKey = "xxxxxxxxxxxxxxxx"
 
 ## MVP Version:
 This version uses various libraries like [RxJava](https://github.com/ReactiveX/RxJava), [RxAndroid](https://github.com/ReactiveX/RxAndroid), [Retrofit](https://github.com/square/retrofit), [Guava](https://github.com/google/guava)
-[PopularMoviesApp MVP Version](https://github.com/manvigupta1987/PopularMovies/tree/branch_MVP)
+* [PopularMoviesApp MVP Version](https://github.com/manvigupta1987/PopularMovies/tree/branch_MVP)
 
 ## Libraries
 
